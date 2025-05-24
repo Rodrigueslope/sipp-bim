@@ -1,0 +1,100 @@
+                    <div class="perfil-descricao">Entre 3 e 8 anos — atua com autonomia e coordenação parcial.</div>
+                </div>
+                <div class="perfil-valor">R$ 125/h</div>
+                <input type="number" id="arq-pleno" class="perfil-quantidade" min="0" value="1">
+            </div>
+            
+            <div class="perfil-profissional">
+                <div class="perfil-info">
+                    <label for="arq-senior">Arquiteto Sênior (R$ 190/h)</label>
+                    <div class="perfil-descricao">Mais de 8 anos — lidera equipes e assume responsabilidades técnicas complexas.</div>
+                </div>
+                <div class="perfil-valor">R$ 190/h</div>
+                <input type="number" id="arq-senior" class="perfil-quantidade" min="0" value="0">
+            </div>
+            
+            <div class="classificacao-profissionais">
+                <h4>Classificação dos profissionais:</h4>
+                <ul>
+                    <li><strong>Júnior:</strong> até 3 anos de experiência — apoio técnico e detalhamento.</li>
+                    <li><strong>Pleno:</strong> entre 3 e 8 anos — atua com autonomia e coordenação parcial.</li>
+                    <li><strong>Sênior:</strong> mais de 8 anos — lidera equipes e assume responsabilidades técnicas complexas.</li>
+                </ul>
+            </div>
+            
+            <div class="distribuicao-horas">
+                <h4>Distribuição de Horas por Perfil:</h4>
+                <div class="distribuicao-padrao">
+                    <p>Por padrão, a carga horária total é distribuída entre os perfis na seguinte proporção:</p>
+                    <ul>
+                        <li>Júnior: 20% das horas totais</li>
+                        <li>Pleno: 40% das horas totais</li>
+                        <li>Sênior: 40% das horas totais</li>
+                    </ul>
+                </div>
+                
+                <button id="personalizar-distribuicao-btn">Personalizar distribuição de horas</button>
+                
+                <div id="personalizar-distribuicao" class="personalizar-distribuicao">
+                    <p>Informe a porcentagem de participação de cada perfil (a soma deve ser 100%):</p>
+                    
+                    <div class="distribuicao-input">
+                        <label for="perc-junior">Percentual Júnior:</label>
+                        <input type="number" id="perc-junior" min="0" max="100" value="20">
+                        <span>%</span>
+                    </div>
+                    
+                    <div class="distribuicao-input">
+                        <label for="perc-pleno">Percentual Pleno:</label>
+                        <input type="number" id="perc-pleno" min="0" max="100" value="40">
+                        <span>%</span>
+                    </div>
+                    
+                    <div class="distribuicao-input">
+                        <label for="perc-senior">Percentual Sênior:</label>
+                        <input type="number" id="perc-senior" min="0" max="100" value="40">
+                        <span>%</span>
+                    </div>
+                    
+                    <div class="distribuicao-total">
+                        Total: <span id="perc-total">100</span>%
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="base-calculo-section">
+            <h2>5. Base de Cálculo Referencial</h2>
+            
+            <button class="base-calculo-btn" data-base="Sinduscon-PA (Norte - Abril/2025)">Sinduscon-PA (Norte - Abril/2025)</button>
+            <button class="base-calculo-btn" data-base="Sinduscon-JP (Nordeste - Julho/2024)">Sinduscon-JP (Nordeste - Julho/2024)</button>
+            <button class="base-calculo-btn" data-base="Sinduscon-SP (Sudeste - Abril/2025)">Sinduscon-SP (Sudeste - Abril/2025)</button>
+            <button class="base-calculo-btn" data-base="Sinduscon-PR (Sul - Abril/2025)">Sinduscon-PR (Sul - Abril/2025)</button>
+            <button class="base-calculo-btn selected" data-base="Média de Mercado (Base Edital SRPFAM)">Média de Mercado (Base Edital SRPFAM)</button>
+            
+            <p>Nota: A disponibilidade e aplicabilidade das bases podem variar. Sinduscon (CUB) é primariamente para custos de OBRA, não de PROJETO. "Média de Mercado" aqui é uma estimativa baseada em editais públicos para PROJETOS BIM.</p>
+        </section>
+        
+        <button id="simular-custo">Simular Custo</button>
+        
+        <section id="resultado" style="display: none;">
+            <h2>6. Resultado da Simulação</h2>
+            
+            <div class="resultado-box faixa-estimada">
+                <h3>Faixa Estimada: <span id="faixa-estimada">R$ 0,00 - R$ 0,00</span></h3>
+            </div>
+            
+            <div class="resultado-box valor-sugerido">
+                <h3>Valor Sugerido: <span id="valor-sugerido">R$ 0,00</span></h3>
+            </div>
+            
+            <div class="explicacao-detalhada" id="explicacao-detalhada">
+                <!-- Conteúdo dinâmico será inserido aqui -->
+            </div>
+            
+            <button id="exportar-pdf">Exportar como PDF</button>
+        </section>
+    </div>
+
+    <script src="script_atualizado.js"></script>
+</body>
