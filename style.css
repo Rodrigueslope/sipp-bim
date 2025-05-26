@@ -279,4 +279,14 @@ button:hover {
         font-size: 0.9em;
         padding: 8px;
     }
+    #tipo-calculo-section div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#tipo-calculo-section input[type="radio"] {
+    margin-right: 10px;
+}
+
 }
