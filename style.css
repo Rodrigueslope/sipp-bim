@@ -288,5 +288,13 @@ button:hover {
 #tipo-calculo-section input[type="radio"] {
     margin-right: 10px;
 }
+.titulo-com-fundo {
+  background-color: #e9ecef;
+  padding: 8px 15px;
+  border-radius: 20px; /* bordas bem circulares */
+  display: inline-block;
+  font-weight: 600;
+  color: #333;
+
 
 }
