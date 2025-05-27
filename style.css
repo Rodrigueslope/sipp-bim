@@ -291,10 +291,10 @@ button:hover {
 .titulo-com-fundo {
   background-color: #e9ecef;
   padding: 8px 15px;
-  border-radius: 20px; /* bordas bem circulares */
+  border-radius: 20px;
   display: inline-block;
   font-weight: 600;
   color: #333;
-
+}
 
 }
