@@ -305,6 +305,35 @@
             max-width: 200px;
             height: auto;
         }
+        #simular-btn {
+  background-color: #50C878;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#simular-btn:hover {
+  background-color: #3cb371;
+  transform: translateX(-50%) scale(1.05);
+}
+
+@media screen and (min-width: 768px) {
+  #simular-btn {
+    position: static;
+    margin: 30px auto;
+    display: block;
+    transform: none;
+  }
     </style>
 </head>
 <body>
