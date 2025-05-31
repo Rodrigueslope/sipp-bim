@@ -78,9 +78,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const percentuaisCUB = {
         "Arquitetônico": { min: 0.015, max: 0.020 },
         "Estrutural": { min: 0.008, max: 0.012 },
-        "Instalação Elétrica": { Min: 0.005, Max: 0.008 },
-        "Instalação Hidráulica": { Min: 0.004, Max: 0.007 },
-        "Combate a Incêndio": { Min: 0.003, Max: 0.005 },
+        "Instalação Elétrica": { min: 0.005, max: 0.008 },
+        "Instalação Hidráulica": { min: 0.004, max: 0.007 },
+        "Combate a Incêndio": { min: 0.003, max: 0.005 },
         "Compatibilização BIM": { min: 0.005, max: 0.010 },
         "Coordenação BIM": { min: 0.005, max: 0.010 },
         "As Built / Levantamento BIM": { min: 0.003, max: 0.006 },
