@@ -47,7 +47,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const valoresHora = {
         "Arquitetônico": 145.42,
         "Estrutural": 132.50,
-        "Instalações (Elétrica, Hidráulica, etc)": 128.75,
+        "Instalação Elétrica": 128.75,
+        "Instalação Hidráulica": 118.75,
+        "Combate a Incêndio": 108.75,
         "Compatibilização BIM": 155.30,
         "Coordenação BIM": 165.80,
         "As Built / Levantamento BIM": 140.25,
@@ -76,7 +78,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const percentuaisCUB = {
         "Arquitetônico": { min: 0.015, max: 0.020 },
         "Estrutural": { min: 0.008, max: 0.012 },
-        "Instalações (Elétrica, Hidráulica, etc)": { min: 0.005, max: 0.008 },
+        "Instalação Elétrica": { Min: 0.005, Max: 0.008 },
+        "Instalação Hidráulica": { Min: 0.004, Max: 0.007 },
+        "Combate a Incêndio": { Min: 0.003, Max: 0.005 },
         "Compatibilização BIM": { min: 0.005, max: 0.010 },
         "Coordenação BIM": { min: 0.005, max: 0.010 },
         "As Built / Levantamento BIM": { min: 0.003, max: 0.006 },
