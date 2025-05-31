@@ -1,302 +1,303 @@
-/* Estilos Globais */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7f6;
-    color: #333;
-}
-
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.header-logo {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.logo {
-    max-width: 250px;
-    height: auto;
-}
-
-h1 {
-    font-family: 'Poppins', sans-serif;
-    color: #0A66C2;
-    font-size: 2.4rem;
-    font-weight: 700;
-    text-align: center;
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
-
-h2 {
-    color: #0077b6;
-    border-bottom: 2px solid #ade8f4;
-    padding-bottom: 10px;
-    margin-top: 20px;
-}
-
-h3 {
-    color: #0077b6;
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
-
-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fdfdfd;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #023047;
-}
-
-input[type="text"],
-input[type="number"],
-select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Para incluir padding e border na largura total */
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-    margin-right: 8px;
-}
-
-button {
-    display: inline-block;
-    background-color: #0077b6;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #005f73;
-}
-
-#resultado div {
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 4px;
-}
-
-#faixa-valores {
-    background-color: #e0f7fa;
-    border-left: 5px solid #0077b6;
-}
-
-#valor-sugerido {
-    background-color: #d4edda;
-    border-left: 5px solid #28a745;
-    font-weight: bold;
-}
-
-#exportar-pdf {
-    background-color: #fb8500;
-    margin-top: 15px;
-}
-
-#exportar-pdf:hover {
-    background-color: #e27000;
-}
-
-/* Estilos para a explicação detalhada do cálculo */
-.explicacao-calculo {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 5px;
-}
-
-.explicacao-formula {
-    margin: 10px 0;
-    padding: 10px;
-    background-color: #e7f5ff;
-    border-left: 4px solid #0077b6;
-    font-family: monospace;
-}
-
-.explicacao-passos {
-    margin-top: 15px;
-}
-
-.explicacao-passos ol {
-    padding-left: 25px;
-}
-
-.explicacao-passos li {
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-/* Tooltip para explicação de complexidade */
-.tooltip-container {
-    position: relative;
-    display: inline-block;
-    margin-left: 10px;
-}
-
-.tooltip-icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    background-color: #0077b6;
-    color: white;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 20px;
-    cursor: help;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: 300px;
-    background-color: #333;
-    color: #fff;
-    text-align: left;
-    border-radius: 6px;
-    padding: 10px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -150px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.9em;
-    line-height: 1.4;
-}
-
-.tooltip-container:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Estilos para as opções de tipo de projeto e tipo de cálculo */
-.option-group div {
-    margin-bottom: 10px;
-}
-
-.option-group label {
-    font-weight: normal;
-    display: inline-block;
-    margin-left: 5px;
-}
-
-/* Estilos para os botões de base de cálculo */
-.base-calculo-btn {
-    margin: 5px;
-    padding: 10px 15px;
-    background-color: #e9ecef;
-    color: #495057;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.base-calculo-btn:hover {
-    background-color: #dee2e6;
-}
-
-.base-calculo-btn.selected {
-    background-color: #0077b6;
-    color: white;
-    border-color: #0077b6;
-}
-
-.base-calculo-btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.info-text {
-    font-size: 0.9em;
-    color: #6c757d;
-    margin-top: 5px;
-    font-style: italic;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    h2 {
-        font-size: 1.4em;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-        padding: 8px;
-    }
-
-    button {
-        padding: 8px 15px;
-        font-size: 15px;
-    }
-    
-    .tooltip-text {
-        width: 250px;
-        margin-left: -125px;
-    }
-    
-    .explicacao-formula {
-        font-size: 0.9em;
-        padding: 8px;
-    }
-    #tipo-calculo-section div {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-#tipo-calculo-section input[type="radio"] {
-    margin-right: 10px;
-}
-.titulo-com-fundo {
-  background-color: #e9ecef;
-  padding: 8px 15px;
-  border-radius: 20px;
+ /* Estilos Globais */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            font-family: 'Poppins', sans-serif;
+  color: #0A66C2;
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+        }
+        
+        h2 {
+            color: #0077b6;
+            border-bottom: 2px solid #0077b6;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        .titulo-com-fundo {
+  background-color: #80bfff;
+  padding: 2px 5px;
+  border-radius: 5px;
   display: inline-block;
   font-weight: 600;
   color: #333;
 }
-@media (max-width: 768px) {
+
+        
+        /* Seções */
+        section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Formulários */
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        /* Botões */
+        button {
+           background-color: #50C878;  /* Verde esmeralda */
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  font-weight: 600;
+  color: white;               /* Contraste melhor com o verde */
+  font-size: 1.1rem;
+        }
+        
+        button:hover {
+            background-color: #005f8d;
+        }
+        
+        .base-calculo-btn {
+            background-color: #e9ecef;
+            color: #333;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .base-calculo-btn.selected {
+            background-color: #0077b6;
+            color: white;
+        }
+        
+        /* Resultados */
+        .resultado-box {
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        
+        .faixa-estimada {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .valor-sugerido {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            margin-top: 10px;
+        }
+        
+        /* Explicação */
+        .formula {
+            background-color: #f1f8ff;
+            padding: 10px;
+            border-left: 5px solid #0077b6;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        
+        .explicacao-detalhada {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .explicacao-detalhada h3 {
+            color: #0077b6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .explicacao-detalhada ul,
+        .explicacao-detalhada ol {
+            margin-left: 20px;
+        }
+        
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 5px;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Perfis Profissionais */
+        .perfil-profissional {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .perfil-info {
+            flex-grow: 1;
+        }
+        
+        .perfil-valor {
+            font-weight: bold;
+            color: #0077b6;
+            margin-right: 15px;
+        }
+        
+        .perfil-quantidade {
+            width: 80px !important;
+        }
+        
+        .perfil-descricao {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .classificacao-profissionais {
+            background-color: #f1f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            border-left: 5px solid #0077b6;
+        }
+        
+        .classificacao-profissionais h4 {
+            margin-top: 0;
+            color: #0077b6;
+        }
+        
+        .classificacao-profissionais ul {
+            margin-bottom: 0;
+        }
+        
+        /* Distribuição de Horas */
+        .distribuicao-horas {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 5px solid #0077b6;
+        }
+        
+        .distribuicao-horas h4 {
+            margin-top: 0;
+            color: #0077b6;
+        }
+        
+        .distribuicao-padrao {
+            margin-bottom: 15px;
+        }
+        
+        .personalizar-distribuicao {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .personalizar-distribuicao.ativo {
+            display: block;
+        }
+        
+        .distribuicao-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .distribuicao-input label {
+            margin-top: 0;
+            margin-right: 10px;
+            min-width: 150px;
+        }
+        
+        .distribuicao-input input {
+            width: 80px !important;
+        }
+        
+        .distribuicao-total {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #0077b6;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .tooltip .tooltiptext {
+                width: 200px;
+                margin-left: -100px;
+            }
+            
+            .perfil-profissional {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .perfil-valor {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container img {
+            max-width: 200px;
+            height: auto;
+        }
+        @media (max-width: 768px) {
   .container, .recipiente, section {
     width: 100%;
     padding: 10px;
@@ -332,6 +333,13 @@ button:hover {
     font-size: 1.1rem;
     padding: 15px;
   }
-}
 
 }
+
+@media screen and (min-width: 768px) {
+  #simular-btn {
+    position: static;
+    margin: 30px auto;
+    display: block;
+    transform: none;
+  }
