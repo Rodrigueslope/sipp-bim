@@ -264,49 +264,41 @@
             margin-top: 10px;
             color: #0077b6;
         }
-        
-        /* Responsividade */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .tooltip .tooltiptext {
-                width: 200px;
-                margin-left: -100px;
-            }
-            
-            .perfil-profissional {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .perfil-valor {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-        }
+       /* Responsividade até 768px */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    max-width: 100vw;
+  }
 
-        /* Logo */
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo-container img {
-            max-width: 200px;
-            height: auto;
-        }
-        @media (max-width: 768px) {
+  .tooltip .tooltiptext {
+    width: 200px;
+    margin-left: -100px;
+  }
+
+  .perfil-profissional {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .perfil-valor {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
   .container, .recipiente, section {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
+    margin-bottom: 16px;
+    border-radius: 16px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   }
 
   h1, h2 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
     text-align: center;
+    margin: 10px 0 !important;
   }
 
   button, .base-calculo-btn {
@@ -315,10 +307,11 @@
     font-size: 1rem;
   }
 
-  select, input[type="text"], input[type="number"] {
-    width: 100%;
-    font-size: 1rem;
-    margin-bottom: 10px;
+  select, input[type="text"], input[type="number"], textarea {
+    width: 100% !important;
+    font-size: 1rem !important;
+    margin-bottom: 10px !important;
+    box-sizing: border-box;
   }
 
   .resultado-box {
@@ -332,64 +325,41 @@
     left: 5%;
     font-size: 1.1rem;
     padding: 15px;
-  }
-
-}
-
-@media screen and (min-width: 768px) {
-  #simular-btn {
     position: static;
     margin: 30px auto;
     display: block;
     transform: none;
   }
- /* Responsividade básica para mobile */
-@media (max-width: 600px) {
-  body {
-    max-width: 100vw;
-    padding: 5px;
-  }
-  .container, section, .perfil-profissional, .logo-container, .painel-section, .resultados-section {
-    width: 100% !important;
-    min-width: 0 !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  h1, h2, h3 {
-    font-size: 1.2rem !important;
-    margin: 15px 0 !important;
-  }
-  input, select, button, textarea {
-    width: 100% !important;
-    font-size: 1rem !important;
-    margin-bottom: 10px !important;
-    box-sizing: border-box;
-  }
-  img {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-  .botoes-acao, .grupo-botoes {
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
- @media (max-width: 600px) {
+
   .logo-container img {
     margin-top: 10px !important;
     width: 80vw !important;
     max-width: 320px;
     height: auto;
   }
-  .container, section {
-    border-radius: 16px !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-    margin-bottom: 16px;
+
+  .botoes-acao, .grupo-botoes {
+    flex-direction: column !important;
+    gap: 10px !important;
   }
-  h1 {
-    font-size: 1.5rem !important;
+}
+
+/* Responsividade ainda mais agressiva até 600px */
+@media (max-width: 600px) {
+  h1, h2, h3 {
+    font-size: 1.2rem !important;
     margin: 10px 0 !important;
+  }
+
+  .logo-container img {
+    width: 95vw !important;
+    max-width: 280px;
+    margin-top: 5px !important;
+  }
+
+  .container, section {
+    padding: 4vw !important;
+    margin-bottom: 10px !important;
   }
 }
 
