@@ -89,12 +89,48 @@
     </form>
   </div>
   <script>
-    document.getElementById('cadastro-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      // Aqui você pode enviar os dados para API, Google Sheets etc.
-      window.location.href = "index.html";
+document.getElementById('cadastro-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Pegando os dados do formulário
+    const nome = document.querySelector('input[name="nome"]').value;
+    const email = document.querySelector('input[name="email"]').value;
+    const telefone = document.querySelector('input[name="telefone"]').value;
+    const regiao = document.querySelector('input[name="regiao"]').value;
+
+    // Montando o JSON no formato aceito pelo SheetDB
+    const data = {
+        data: [
+            {
+                Nome: nome,
+                Email: email,
+                Telefone: telefone,
+                Regiao: regiao
+            }
+        ]
+    };
+
+    // Enviando para a API do SheetDB
+    fetch('https://sheetdb.io/api/v1/f07t7kh8zxp6h', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if(response.ok){
+            window.location.href = "index.html"; // Redireciona para o simulador
+        } else {
+            alert('Erro ao cadastrar. Tente novamente!');
+        }
+    })
+    .catch(error => {
+        alert('Erro de conexão!');
+        console.error(error);
     });
-  </script>
+});
+</script>
 </body>
 </html>
 
