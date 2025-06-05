@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro SIPP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Bem-vindo ao SIPP</h1>
+    <form id="cadastro-form">
+      <input type="text" name="nome" placeholder="Nome" required>
+      <input type="email" name="email" placeholder="E-mail" required>
+      <input type="tel" name="telefone" placeholder="Telefone">
+      <input type="text" name="regiao" placeholder="Região">
+      <button type="submit">Acessar Simulador</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('cadastro-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      // Aqui você pode fazer uma chamada para uma API, Google Sheets, etc.
+      // Após cadastrar, redireciona para o simulador:
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
