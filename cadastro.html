@@ -92,25 +92,26 @@
 document.getElementById('cadastro-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Pegando os dados do formulário
     const nome = document.querySelector('input[name="nome"]').value;
     const email = document.querySelector('input[name="email"]').value;
     const telefone = document.querySelector('input[name="telefone"]').value;
     const regiao = document.querySelector('input[name="regiao"]').value;
+    
+    // Captura a data/hora do momento do cadastro (formato ISO, compatível com Sheets)
+    const dataHora = new Date().toLocaleString("pt-BR"); // Você pode usar toISOString() se quiser padrão internacional
 
-    // Montando o JSON no formato aceito pelo SheetDB
     const data = {
         data: [
             {
                 Nome: nome,
                 Email: email,
                 Telefone: telefone,
-                Regiao: regiao
+                Regiao: regiao,
+                DataHora: dataHora
             }
         ]
     };
 
-    // Enviando para a API do SheetDB
     fetch('https://sheetdb.io/api/v1/f07t7kh8zxp6h', {
         method: 'POST',
         headers: {
@@ -120,7 +121,7 @@ document.getElementById('cadastro-form').addEventListener('submit', function(eve
     })
     .then(response => {
         if(response.ok){
-            window.location.href = "index.html"; // Redireciona para o simulador
+            window.location.href = "index.html";
         } else {
             alert('Erro ao cadastrar. Tente novamente!');
         }
@@ -130,6 +131,7 @@ document.getElementById('cadastro-form').addEventListener('submit', function(eve
         console.error(error);
     });
 });
+
 </script>
 </body>
 </html>
