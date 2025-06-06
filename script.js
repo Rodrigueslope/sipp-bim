@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Chaves exatamente iguais aos valores de data-base dos botões
     const valoresCUB = {
         "Sinduscon-PA (Norte - Maio/2025)": 2164.98,
-        "Sinduscon-JP (Nordeste - Maio/2024)": 1628.59,
+        "Sinduscon-JP (Nordeste - Maio/2025)": 1628.59,
         "Sinduscon-SP (Sudeste - Maio/2025)": 2067.04,
         "Sinduscon-PR (Sul - Maio/2025)": 2441.87,
         "Média de Mercado (Base Edital SRPFAM)": 0 // Não usa CUB, usa valor/hora
