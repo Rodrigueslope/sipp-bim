@@ -91,10 +91,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Valores CUB por região (R$/m²) - Atualizados para Maio 2025
     // Chaves exatamente iguais aos valores de data-base dos botões
     const valoresCUB = {
-        "Sinduscon-PA (Norte - Abril/2025)": 2159.97,
-        "Sinduscon-JP (Nordeste - Julho/2024)": 1612.60,
-        "Sinduscon-SP (Sudeste - Abril/2025)": 2053.66,
-        "Sinduscon-PR (Sul - Abril/2025)": 2462.10,
+        "Sinduscon-PA (Norte - Maio/2025)": 2164.98,
+        "Sinduscon-JP (Nordeste - Maio/2024)": 1628.59,
+        "Sinduscon-SP (Sudeste - Maio/2025)": 2067.04,
+        "Sinduscon-PR (Sul - Maio/2025)": 2441.87,
         "Média de Mercado (Base Edital SRPFAM)": 0 // Não usa CUB, usa valor/hora
     };
     
