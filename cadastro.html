@@ -133,13 +133,15 @@ document.getElementById('cadastro-form').addEventListener('submit', function(eve
         },
         body: JSON.stringify(data)
     })
-    .then(response => {
-        if(response.ok){
-            window.location.href = "index.html";
-        } else {
-            alert('Erro ao cadastrar. Tente novamente!');
-        }
-    })
+   .then(response => {
+    if(response.ok){
+        // Seta flag no localStorage
+        localStorage.setItem('sipp_cadastro', 'ok');
+        window.location.href = "index.html";
+    } else {
+        alert('Erro ao cadastrar. Tente novamente!');
+    }
+})
     .catch(error => {
         alert('Erro de conexão!');
         console.error(error);
