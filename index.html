@@ -1094,6 +1094,11 @@
             // Exportar como PDF
             exportarPDFButton.addEventListener("click", exportarParaPDF);
         });
+        <script>
+  // Checa se o usuário passou pelo cadastro
+  if (localStorage.getItem('sipp_cadastro') !== 'ok') {
+    window.location.href = "cadastro.html";
+  }
     </script>
 </body>
 </html>
