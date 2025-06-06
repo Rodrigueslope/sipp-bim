@@ -8,7 +8,6 @@
       <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-
     <div class="logo-container">
         <img src="sipp.png" alt="Logo RBIM">
     </div>
@@ -207,7 +206,6 @@
         
         <section id="base-calculo-section">
             <h2><span class="titulo-com-fundo">5. Base de Cálculo Referencial </span></h2>
-             <p>Nota: SE esclheu na OPÇÃO 2 > Valor por metro quadrado (R$/m²), Então  Escolha Obrigatoriamente Algum Sinduscon a Seguir : </p>
             
             <button class="base-calculo-btn" data-base="Sinduscon-PA (Norte - Maio/2025)">Sinduscon-PA (Norte - Maio/2025)</button>
             <button class="base-calculo-btn" data-base="Sinduscon-JP (Nordeste - Maio/2025)">Sinduscon-JP (Nordeste - Maio/2025)</button>
@@ -215,7 +213,7 @@
             <button class="base-calculo-btn" data-base="Sinduscon-PR (Sul - Maio/2025)">Sinduscon-PR (Sul - Maio/2025)</button>
             <button class="base-calculo-btn selected" data-base="Média de Mercado (Base Edital SRPFAM)">Média de Mercado (Base Edital SRPFAM)</button>
             
-            <p>Nota: A disponibilidade e aplicabilidade das bases podem variar. Sinduscon (CUB) é primariamente para custos de OBRA, não de PROJETO. "Média de Mercado" aqui é uma estimativa baseada em editais públicos para PROJETOS BIM.</p>
+            <p>Nota: A disponibilidade e aplicabilidade das bases podem variar. Sinduscon (CUB) é primariamente para custos de OBRA, e usado aqui como  "Média de Mercado"  baseado em editais públicos para SERVIÇOS BIM.</p>
         </section>
         
        <button id="simular-custo" class="simular-btn">Simular Custo</button>
@@ -335,7 +333,7 @@
             // Chaves exatamente iguais aos valores de data-base dos botões
             const valoresCUB = {
                 "Sinduscon-PA (Norte - Maio/2025)":  2164.98,
-                "Sinduscon-JP (Nordeste - Maio/2025)":  1628.59,
+                "Sinduscon-JP (Nordeste - Maio/2024)":  1628.59,
                 "Sinduscon-SP (Sudeste - Maio/2025)": 2067.04,
                 "Sinduscon-PR (Sul - Maio/2025)":  2441.87,
                 "Média de Mercado (Base Edital SRPFAM)": 0 // Não usa CUB, usa valor/hora
@@ -1090,12 +1088,11 @@
                     printWindow.print();
                     URL.revokeObjectURL(blobUrl);
                 };
+            }
             
             // Exportar como PDF
             exportarPDFButton.addEventListener("click", exportarParaPDF);
         });
-  
-  }
     </script>
 </body>
 </html>
