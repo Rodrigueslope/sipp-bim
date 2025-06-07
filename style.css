@@ -90,6 +90,27 @@
             background-color: #0077b6;
             color: white;
         }
+/* Centralizando o botão */
+#simular-custo {
+  display: block;          /* Coloca o botão como bloco para centralizar */
+  margin: 20px auto;       /* Margem automática nas laterais para centralizar */
+  padding: 12px 24px;      /* Ajusta o tamanho interno do botão */
+  
+  /* Deixando o botão mais vibrante */
+  background-color: #28a745;  /* Cor de fundo verde vibrante */
+  color: #fff;                /* Cor da fonte branca */
+  font-size: 16px;            /* Tamanho da fonte maior */
+  font-weight: bold;          /* Negrito para mais impacto */
+  border: none;               /* Remove a borda padrão */
+  border-radius: 6px;         /* Cantos arredondados */
+  cursor: pointer;            /* Cursor de mão ao passar */
+  transition: background-color 0.3s ease;  /* Animação suave na mudança de cor */
+}
+
+/* Efeito ao passar o mouse */
+#simular-custo:hover {
+  background-color: #218838;  /* Tom de verde mais escuro no hover */
+}
         
         /* Resultados */
         .resultado-box {
