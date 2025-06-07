@@ -334,5 +334,6 @@ document.addEventListener("DOMContentLoaded", function() {
             // Cálculo por hora técnica dos profissionais envolvidos
             const totalProfissionais = getTotalProfissionais();
             if (totalProfissionais === 0) {
-                alert("Por favor, informe a quantidade de pel
+                alert("Por favor, informe a quantidade de pelo menos um perfil profissional NO ITEM 4.");
+                return null;
 (Content truncated due to size limit. Use line ranges to read in chunks)
