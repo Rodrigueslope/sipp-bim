@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "Sinduscon-JP (Nordeste - Maio/2025)": 1628.59,
         "Sinduscon-SP (Sudeste - Maio/2025)": 2067.04,
         "Sinduscon-PR (Sul - Maio/2025)": 2441.87,
+        "Sinduscon-GO (Centro Oeste - Maio/2025)":  2060.92,
         "Média de Mercado (Base Edital SRPFAM)": 0 // Não usa CUB, usa valor/hora
     };
     
