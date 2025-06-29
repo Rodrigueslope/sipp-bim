@@ -17,6 +17,22 @@
         <!-- 1. Dados Para Simulação (antes era item 3) -->
         <section id="dados-simulacao-section">
             <h2><span class="titulo-com-fundo">1. Dados Para Simulação</span></h2>
+            <!-- Subitem: Tipo do Projeto/Serviço -->
+  <div class="subitem">
+    <label for="tipo-projeto">Tipo do Projeto/Serviço:</label>
+    <select id="tipo-projeto">
+         <option value="Arquitetônico">Arquitetônico</option>
+                <option value="Estrutural">Estrutural</option>
+                <option value="Instalação Elétrica">Instalação Elétrica</option>
+                <option value="Instalação Hidráulica">Instalação Hidráulica</option>
+                <option value="Combate a Incêndio">Combate a Incêndio</option>
+                <option value="Compatibilização BIM">Compatibilização BIM</option>
+                <option value="Coordenação BIM">Coordenação BIM</option>
+                <option value="As Built / Levantamento BIM">As Built / Levantamento BIM</option>
+                <option value="Digital Twin">Digital Twin</option>
+                <option value="Outros (especificar)">Outros (especificar)</option>
+        </select>
+  </div>
             <label for="area">Área do Projeto (m²):</label>
             <input type="number" id="area" min="1" value="1000">
             <label for="localidade">Localidade (Estado - apenas para referência contextual):</label>
