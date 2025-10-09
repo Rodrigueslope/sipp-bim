@@ -384,10 +384,12 @@ const avisoMetro = document.getElementById("aviso-metro");
  
 }
  });
-   // Controla a exibição do aviso do cálculo por m²
+ // Controla a exibição do aviso do cálculo por m²
 function toggleAvisoMetro(){
-  avisoMetro.hidden = !radioMetro.checked;
-                    });
+  const selecionado = document.querySelector('input[name="tipo-calculo"]:checked');
+  const isMetro = selecionado && selecionado.value === 'metro';
+  avisoMetro.hidden = !isMetro;
+}
                     
                     // Se nenhum Sinduscon estiver selecionado, selecionar o primeiro
                     if (!sindusconSelecionado) {
