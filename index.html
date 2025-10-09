@@ -384,11 +384,7 @@ const avisoMetro = document.getElementById("aviso-metro");
  
 }
  });
- // Controla a exibição do aviso do cálculo por m²
-function toggleAvisoMetro(){
-  const selecionado = document.querySelector('input[name="tipo-calculo"]:checked');
-  const isMetro = selecionado && selecionado.value === 'metro';
-  avisoMetro.hidden = !isMetro;
+
 }
                     
                     // Se nenhum Sinduscon estiver selecionado, selecionar o primeiro
@@ -424,7 +420,12 @@ function toggleAvisoMetro(){
                     }
                 }
             }
-            
+            // Controla a exibição do aviso do cálculo por m²
+function toggleAvisoMetro(){
+  const selecionado = document.querySelector('input[name="tipo-calculo"]:checked');
+  const isMetro = selecionado && selecionado.value === 'metro';
+  avisoMetro.hidden = !isMetro;
+         }
             // Adiciona evento de clique aos botões de base de cálculo
             baseCalculoBtns.forEach(btn => {
                 btn.addEventListener("click", function() {
