@@ -256,6 +256,10 @@
             const simularCustoButton = document.getElementById("simular-custo");
             const exportarPDFButton = document.getElementById("exportar-pdf");
             const baseCalculoSection = document.getElementById("base-calculo-section");
+                // Aviso do m²
+const radioMetro = document.getElementById("calc-metro");
+const avisoMetro = document.getElementById("aviso-metro");
+
             
             // Elementos de perfis profissionais
             const engJuniorInput = document.getElementById("eng-junior");
@@ -377,6 +381,11 @@
                             if (btn.classList.contains("selected")) {
                                 btn.classList.remove("selected");
                             }
+                                // Controla a exibição do aviso do cálculo por m²
+function toggleAvisoMetro(){
+  avisoMetro.hidden = !radioMetro.checked;
+}
+
                         }
                     });
                     
@@ -430,10 +439,14 @@
             });
             
             // Adiciona eventos aos inputs de tipo de cálculo
-            tipoCalculo.forEach(radio => {
-                radio.addEventListener("change", function() {
-                    tipoCalculoSelecionado = this.value;
-                    atualizarVisibilidadeBaseCalculo();
+           tipoCalculo.forEach(radio => {
+  radio.addEventListener("change", function() {
+    tipoCalculoSelecionado = this.value;
+    atualizarVisibilidadeBaseCalculo();
+    toggleAvisoMetro(); // controla o aviso do m²
+  });
+});
+
                 });
             });
             
