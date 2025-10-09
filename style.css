@@ -445,6 +445,10 @@
 #simular-custo:hover {
   background-color: #218838;  /* Tom de verde mais escuro no hover */
 }
+/* Corrige o aviso do cálculo por m² */
+.metro-alert[hidden] {
+  display: none !important;
+}
 
 }
 
