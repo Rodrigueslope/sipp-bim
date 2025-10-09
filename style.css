@@ -419,6 +419,21 @@
 #simular-custo:hover {
   background-color: #218838;  /* Tom de verde mais escuro no hover */
 }
+/* ===== Aviso do cálculo por m² ===== */
+.metro-alert{
+  display:flex; align-items:flex-start; gap:.6rem;
+  margin:10px 0 0 34px;
+  padding:12px 14px;
+  border:1px solid rgba(0,163,255,.35);
+  background:rgba(0,163,255,.10);
+  color:#0b3b60;
+  border-radius:10px;
+  box-shadow:0 6px 14px rgba(16,24,40,.06);
+  animation: metroFade .25s ease;
+  max-width:980px;
+}
+.metro-alert-icon{ line-height:1; margin-top:2px }
+@keyframes metroFade { from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:translateY(0)} }
 
 
 }
