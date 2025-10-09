@@ -381,12 +381,13 @@ const avisoMetro = document.getElementById("aviso-metro");
                             if (btn.classList.contains("selected")) {
                                 btn.classList.remove("selected");
                             }
-                                // Controla a exibição do aviso do cálculo por m²
-function toggleAvisoMetro(){
-  avisoMetro.hidden = !radioMetro.checked;
+ 
 }
 
                         }
+   // Controla a exibição do aviso do cálculo por m²
+function toggleAvisoMetro(){
+  avisoMetro.hidden = !radioMetro.checked;
                     });
                     
                     // Se nenhum Sinduscon estiver selecionado, selecionar o primeiro
@@ -447,8 +448,6 @@ function toggleAvisoMetro(){
   });
 });
 
-                });
-            });
             
             // Inicializar a visibilidade das bases de cálculo
             atualizarVisibilidadeBaseCalculo();
