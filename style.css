@@ -396,6 +396,10 @@
   animation: metroFade 0.25s ease;
   max-width: 980px;
 }
+/* Corrige o aviso do cálculo por m² */
+.metro-alert[hidden] {
+  display: none !important;
+}
 
 .metro-alert-icon {
   line-height: 1;
@@ -444,10 +448,6 @@
 /* Efeito ao passar o mouse */
 #simular-custo:hover {
   background-color: #218838;  /* Tom de verde mais escuro no hover */
-}
-/* Corrige o aviso do cálculo por m² */
-.metro-alert[hidden] {
-  display: none !important;
 }
 
 }
