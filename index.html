@@ -358,71 +358,67 @@ const avisoMetro = document.getElementById("aviso-metro");
             document.querySelector('button[data-base="Média de Mercado (Base Edital SRPFAM)"]').classList.add("selected");
             
             // Função para atualizar a visibilidade das bases de cálculo com base no tipo de cálculo
-            function atualizarVisibilidadeBaseCalculo() {
-                const baseCalculoBtns = document.querySelectorAll(".base-calculo-btn");
-                
-                if (tipoCalculoSelecionado === "metro") {
-                    // Se o tipo de cálculo for por metro quadrado, mostrar apenas os Sinduscons
-                    let sindusconSelecionado = false;
-                    
-                    baseCalculoBtns.forEach(btn => {
-                        const baseCalculo = btn.getAttribute("data-base");
-                        if (baseCalculo.includes("Sinduscon")) {
-                            btn.style.display = "inline-block";
-                            
-                            // Se já temos um Sinduscon selecionado, não fazemos nada
-                            if (btn.classList.contains("selected")) {
-                                sindusconSelecionado = true;
-                                selecionadaBaseCalculo = baseCalculo;
-                            }
-                        } else {
-                            btn.style.display = "none";
-                            // Se a base selecionada for a que estamos escondendo, remover a seleção
-                            if (btn.classList.contains("selected")) {
-                                btn.classList.remove("selected");
-                            }
- 
- });
+function atualizarVisibilidadeBaseCalculo() {
+  const baseCalculoBtns = document.querySelectorAll(".base-calculo-btn");
 
-                    // Se nenhum Sinduscon estiver selecionado, selecionar o primeiro
-                    if (!sindusconSelecionado) {
-                        const primeiroBotaoSinduscon = document.querySelector('button[data-base*="Sinduscon"]');
-                        if (primeiroBotaoSinduscon) {
-                            baseCalculoBtns.forEach(b => b.classList.remove("selected"));
-                            primeiroBotaoSinduscon.classList.add("selected");
-                            selecionadaBaseCalculo = primeiroBotaoSinduscon.getAttribute("data-base");
-                        }
-                    }
-                    
-                    // Adicionar mensagem explicativa
-                    const mensagemExplicativa = document.getElementById("mensagem-sinduscon");
-                    if (!mensagemExplicativa) {
-                        const mensagem = document.createElement("p");
-                        mensagem.id = "mensagem-sinduscon";
-                        mensagem.innerHTML = "<strong>Nota:</strong> Para cálculo por metro quadrado (R$/m²), é necessário selecionar uma base Sinduscon.";
-                        mensagem.style.color = "#0077b6";
-                        mensagem.style.marginTop = "10px";
-                        baseCalculoSection.appendChild(mensagem);
-                    }
-                } else {
-                    // Para outros tipos de cálculo, mostrar todas as bases
-                    baseCalculoBtns.forEach(btn => {
-                        btn.style.display = "inline-block";
-                    });
-                    
-                    // Remover mensagem explicativa se existir
-                    const mensagemExplicativa = document.getElementById("mensagem-sinduscon");
-                    if (mensagemExplicativa) {
-                        baseCalculoSection.removeChild(mensagemExplicativa);
-                    }
-                }
-            }
-            // Controla a exibição do aviso do cálculo por m²
-function toggleAvisoMetro(){
+  if (tipoCalculoSelecionado === "metro") {
+    // Mostrar apenas os Sinduscon
+    let sindusconSelecionado = false;
+
+    baseCalculoBtns.forEach(btn => {
+      const baseCalculo = btn.getAttribute("data-base");
+
+      if (baseCalculo.includes("Sinduscon")) {
+        btn.style.display = "inline-block";
+        if (btn.classList.contains("selected")) {
+          sindusconSelecionado = true;
+          selecionadaBaseCalculo = baseCalculo;
+        }
+      } else {
+        // Esconde e remove eventual seleção da base não-Sinduscon
+        btn.style.display = "none";
+        btn.classList.remove("selected");
+      }
+    });
+
+    // Garante que um Sinduscon fique selecionado
+    if (!sindusconSelecionado) {
+      const primeiroBotaoSinduscon = document.querySelector('button[data-base*="Sinduscon"]');
+      if (primeiroBotaoSinduscon) {
+        baseCalculoBtns.forEach(b => b.classList.remove("selected"));
+        primeiroBotaoSinduscon.classList.add("selected");
+        selecionadaBaseCalculo = primeiroBotaoSinduscon.getAttribute("data-base");
+      }
+    }
+
+    // Mensagem explicativa (uma vez só)
+    let mensagemExplicativa = document.getElementById("mensagem-sinduscon");
+    if (!mensagemExplicativa) {
+      mensagemExplicativa = document.createElement("p");
+      mensagemExplicativa.id = "mensagem-sinduscon";
+      mensagemExplicativa.innerHTML =
+        "<strong>Nota:</strong> Para cálculo por metro quadrado (R$/m²), é necessário selecionar uma base Sinduscon.";
+      mensagemExplicativa.style.color = "#0077b6";
+      mensagemExplicativa.style.marginTop = "10px";
+      baseCalculoSection.appendChild(mensagemExplicativa);
+    }
+  } else {
+    // Mostrar todas as bases
+    baseCalculoBtns.forEach(btn => {
+      btn.style.display = "inline-block";
+    });
+
+    // Remover a mensagem, se existir
+    const mensagemExplicativa = document.getElementById("mensagem-sinduscon");
+    if (mensagemExplicativa) mensagemExplicativa.remove();
+  }
+}
+          // Controla a exibição do aviso do cálculo por m²
+function toggleAvisoMetro() {
   const selecionado = document.querySelector('input[name="tipo-calculo"]:checked');
-  const isMetro = selecionado && selecionado.value === 'metro';
+  const isMetro = selecionado && selecionado.value === "metro";
   avisoMetro.hidden = !isMetro;
-         }
+}
             // Adiciona evento de clique aos botões de base de cálculo
             baseCalculoBtns.forEach(btn => {
                 btn.addEventListener("click", function() {
