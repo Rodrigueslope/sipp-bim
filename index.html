@@ -3,66 +3,85 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SIPP BIM — Simulador (One-Page) V4</title>
+  <title>SIPP BIM — Simulador (One-Page) V8</title>
   <style>
     :root{
-      --bg:#f6f8fb; --card:#fff; --ink:#1f2937; --muted:#6b7280;
-      --brand:#2563eb; --line:#e5e7eb; --ok:#16a34a; --warn:#f59e0b;
-      --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.06);
+      --bg:#f6f8fb; --card:#fff; --ink:#0f172a; --muted:#475569;
+      /* RBIM green (forte) */
+      --rbim:#0FB268;
+      --line:#e5e7eb;
+      --radius:14px; --shadow:0 8px 28px rgba(0,0,0,.08);
+      --emerald-bg: rgba(15,178,104,0.16);   /* mais forte que V7 */
+      --emerald-border: rgba(15,178,104,0.45);
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,Roboto,Arial}
-    .wrap{max-width:1200px;margin:32px auto;padding:0 16px}
-    header{margin-bottom:16px}
-    h1{margin:0 0 6px;font-size:22px}
-    .sub{color:var(--muted);font-size:13px}
+    .wrap{max-width:1200px;margin:24px auto 48px;padding:0 16px}
+    header{margin-bottom:16px;display:flex;flex-direction:column;gap:14px;align-items:center}
+    header .brand{display:flex;align-items:center;gap:14px}
+    header img.logo{max-height:70px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+    h1{margin:0 0 6px;font-size:22px;color:var(--rbim)}
+    .sub{color:#64748b;font-size:13px}
     .grid{ display:grid; gap:16px; grid-template-columns: 1.3fr .7fr; }
     @media (max-width:980px){ .grid{grid-template-columns: 1fr} }
 
     .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
     .card .hd{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); }
     .card .hd h2{margin:0;font-size:16px}
-    .card .hd .toggle{ border:0;background:transparent;color:var(--brand);cursor:pointer;font-weight:600; }
+    .card .hd .toggle{ border:0;background:transparent;color:var(--rbim);cursor:pointer;font-weight:700; }
     .card .bd{padding:16px; display:block}
     .card.collapsed .bd{display:none}
+    .locked{opacity:.55; pointer-events:none}
+
+    /* Right-side emerald styling (mais forte) */
+    aside .card.right{
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+    }
+    aside .card.right .hd{
+      border-bottom-color: var(--emerald-border);
+    }
 
     .form-grid{display:grid; gap:12px; grid-template-columns: repeat(2, minmax(0,1fr));}
     @media (max-width:680px){ .form-grid{grid-template-columns: 1fr} }
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    label{font-size:13px;color:#475569;display:block;margin-bottom:6px}
     input[type="text"], input[type="number"], select, textarea{
       width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font:inherit;
     }
-    .hint{font-size:12px;color:var(--muted)}
-    .note{display:flex;gap:8px;align-items:flex-start;background:#eef2ff;border:1px solid #dbeafe;padding:10px 12px;border-radius:10px;font-size:13px}
+    .hint{font-size:12px;color:#64748b}
+    .note{display:flex;gap:8px;align-items:flex-start;background:#ecfdf5;border:1px solid var(--emerald-border);padding:10px 12px;border-radius:10px;font-size:13px;color:#065f46}
+    .escopo-note{display:none; margin-top:10px; background:rgba(15,178,104,0.12); border:1px dashed var(--emerald-border); padding:10px 12px; border-radius:10px; color:#065f46; font-size:13px}
 
     aside{position:sticky; top:16px; height:fit-content; display:flex; flex-direction:column; gap:16px}
     .summary li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
     .summary li:last-child{border-bottom:0}
-    .btn{ appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; }
-    .btn.primary{background:var(--brand); color:#fff}
+    .btn{ appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; }
+    .btn.primary{background:var(--rbim); color:#fff}
     .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
-    .pill.selected{border-color:var(--brand);color:var(--brand);background:#eff6ff}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#334155;cursor:pointer;user-select:none}
+    .pill.selected{border-color:var(--rbim);color:var(--rbim);background:#ecfdf5}
 
     .result-details{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none}
-    .range-box{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
-    .range-box .k{color:var(--muted);font-size:12px}
-    .range-box .v{font-weight:800}
+    .range-box{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+    .range-box .k{color:#475569;font-size:12px}
+    .range-box .v{font-weight:900}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12.5px; background:#0b1424; color:#d1e2ff; padding:10px 12px;border-radius:10px; overflow:auto}
     ol.steps{margin:8px 0 0 16px; padding:0}
     ol.steps li{margin:6px 0}
     ul.obs{margin:8px 0 0 18px;padding:0}
-    ul.obs li{margin:4px 0;color:#374151}
+    ul.obs li{margin:4px 0;color:#0f172a}
     .hide{display:none}
 
     .inline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#1d4ed8;border:1px solid #dbeafe}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
+      <div class="brand">
+        <img class="logo" src="RBIM.png" alt="RBIM" />
+      </div>
       <h1>Simulador de Preços de Projetos e Serviços BIM — SIPP BIM</h1>
       <div class="sub">Preencha, clique em “Simular Custo” e veja o detalhamento com transparência.</div>
     </header>
@@ -115,17 +134,19 @@
             <button class="toggle" data-toggle>Recolher</button>
           </div>
           <div class="bd">
-            <div class="note">
+            <div class="note" id="m2_note" style="display:none;">
               <span>ℹ️</span>
               <div><strong>Atenção:</strong> escolha no item 4 a base Sinduscon/Região para usar o cálculo por m².</div>
             </div>
             <div style="margin-top:12px;display:grid;gap:10px">
               <label class="inline"><input type="radio" name="calc" value="m2" checked> Valor por metro quadrado (R$/m²)</label>
-              <label class="inline"><input type="radio" name="calc" value="hora"> Valor por hora técnica (R$/h) — Estimativa <span class="badge">Blended</span></label>
               <label class="inline"><input type="radio" name="calc" value="phoras"> Por Hora Técnica dos Profissionais Envolvidos</label>
               <div class="inline">
                 <label class="inline"><input type="radio" name="calc" value="escopo"> Valor fechado por escopo — Estimativa</label>
                 <input id="preco_escopo" type="number" min="0" step="50" placeholder="Informe o preço fechado (R$)" class="hide">
+              </div>
+              <div id="escopo_msg" class="escopo-note">
+                <strong>Escopo fechado selecionado.</strong> Informe o preço desejado do projeto no campo acima. Este modo não usa CUB, LOD ou perfis — é um valor único acordado com o cliente.
               </div>
             </div>
           </div>
@@ -211,7 +232,7 @@
       </main>
 
       <aside>
-        <section class="card">
+        <section class="card right">
           <div class="hd"><h2>Resumo</h2></div>
           <div class="bd">
             <ul class="summary" id="resumo">
@@ -225,10 +246,10 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card right">
           <div class="hd"><h2>Resultado</h2></div>
           <div class="bd">
-            <div style="font-size:28px;font-weight:800" id="resultado">R$ —</div>
+            <div style="font-size:28px;font-weight:900" id="resultado">R$ —</div>
             <div class="hint" id="observacoes">Clique em “Simular Custo” para ver detalhes.</div>
 
             <div class="result-details" id="detalhes">
@@ -241,13 +262,13 @@
                 <div class="v" id="sugerido">R$ —</div>
               </div>
 
-              <div style="margin-top:8px;font-weight:700">Fórmula utilizada</div>
+              <div style="margin-top:8px;font-weight:800">Fórmula utilizada</div>
               <div class="mono" id="formula">—</div>
 
-              <div style="margin-top:8px;font-weight:700">Passos do cálculo</div>
+              <div style="margin-top:8px;font-weight:800">Passos do cálculo</div>
               <ol class="steps" id="passos"></ol>
 
-              <div style="margin-top:8px;font-weight:700">Observações sobre o Cálculo</div>
+              <div style="margin-top:8px;font-weight:800">Observações sobre o Cálculo</div>
               <ul class="obs" id="obs"></ul>
             </div>
 
@@ -262,7 +283,7 @@
   </div>
 
   <script>
-    const KEY="sippbim:v4";
+    const KEY="sippbim:v8";
     const $ = (sel,ctx=document)=>ctx.querySelector(sel);
     const $$ = (sel,ctx=document)=>Array.from(ctx.querySelectorAll(sel));
 
@@ -296,10 +317,45 @@
       save();
     });
 
-    // Escopo input toggle
+    // UI helpers
+    function applyCalcModeUI(){
+      const mode = map.calc();
+      const isM2 = mode==='m2';
+      const isPH = mode==='phoras';
+      const perfilCard = document.querySelector('[data-section="perfil"]');
+      const baseCard = document.querySelector('[data-section="base"]');
+      const note = document.getElementById('m2_note');
+
+      // Atenção note só no M2
+      if(note){ note.style.display = isM2 ? 'block' : 'none'; }
+
+      // M2: trava perfil (3); PH: trava base (4); Escopo: libera ambos
+      if(isM2){
+        perfilCard.classList.add('collapsed'); perfilCard.classList.add('locked');
+        baseCard.classList.remove('locked');
+      } else if(isPH){
+        perfilCard.classList.remove('locked'); perfilCard.classList.remove('collapsed'); // deixa aberto
+        baseCard.classList.add('collapsed'); baseCard.classList.add('locked');            // trava base
+      } else { // escopo
+        perfilCard.classList.remove('locked');
+        baseCard.classList.remove('locked');
+      }
+
+      // Ajusta textos dos botões toggle conforme estado atual
+      $$('[data-section]').forEach(sec=>{
+        const btn = sec.querySelector('[data-toggle]');
+        if(!btn) return;
+        btn.textContent = sec.classList.contains('collapsed') ? 'Expandir' : 'Recolher';
+      });
+    }
+
+    // Escopo input + mensagem toggle
     document.addEventListener('change', e=>{
       if(e.target.name==='calc'){
-        $('#preco_escopo').classList.toggle('hide', map.calc()!=='escopo');
+        const escopoAtivo = map.calc()==='escopo';
+        $('#preco_escopo').classList.toggle('hide', !escopoAtivo);
+        $('#escopo_msg').style.display = escopoAtivo ? 'block' : 'none';
+        applyCalcModeUI();
       }
     });
 
@@ -327,7 +383,7 @@
       localStorage.setItem(KEY, JSON.stringify(state));
     }
     function load(){
-      const raw = localStorage.getItem(KEY); if(!raw) return;
+      const raw = localStorage.getItem(KEY); if(!raw) { applyCalcModeUI(); return; }
       const s = JSON.parse(raw);
       map.tipo.value = s.tipo ?? map.tipo.value;
       map.area.value = s.area ?? '';
@@ -353,8 +409,11 @@
         }
       }
       if(s.preco_escopo){ $('#preco_escopo').value = s.preco_escopo; }
-      $('#preco_escopo').classList.toggle('hide', map.calc()!=='escopo');
+      const escopoAtivo = map.calc()==='escopo';
+      $('#preco_escopo').classList.toggle('hide', !escopoAtivo);
+      $('#escopo_msg').style.display = escopoAtivo ? 'block' : 'none';
       updateResumo();
+      applyCalcModeUI();
     }
 
     // Parâmetros
@@ -424,32 +483,13 @@
         ];
         $('#obs').innerHTML = obsList.map(x=>`<li>${x}</li>`).join('');
 
-      } else if(modelo==='hora'){
-        const tarifaHora = 160; // parâmetro ajustável
-        const horas = 120;      // parâmetro ajustável
-        valor = tarifaHora * horas;
-        $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
-        $('#observacoes').textContent = `Estimativa por hora técnica: ${horas}h × R$ ${tarifaHora.toFixed(2)}/h.`;
-        showRange(false);
-        $('#formula').textContent = 'Valor Total = Horas Estimadas × Tarifa por Hora (R$/h)';
-        $('#passos').innerHTML = [
-          `Definição de horas estimadas: ${horas} h`,
-          `Tarifa por hora técnica adotada: R$ ${tarifaHora.toFixed(2)}/h`,
-          `Cálculo: ${horas} h × R$ ${tarifaHora.toFixed(2)}/h = R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`
-        ].map(x=>`<li>${x}</li>`).join('');
-        $('#obs').innerHTML = [
-          'Modelo de custo por hora técnica única (blended rate).',
-          'Ajuste horas e tarifa conforme o escopo real e a senioridade da equipe.',
-          'Impostos/BDI e reembolsáveis podem ser adicionados à parte.'
-        ].map(x=>`<li>${x}</li>`).join('');
-
       } else if(modelo==='phoras'){
         const totalHoras = +$('#horas_totais').value || 0;
         const pj = +$('#pct_jr').value || 0, pp = +$('#pct_pl').value || 0, ps = +$('#pct_sr').value || 0;
         const somaPct = pj+pp+ps;
         const hint = $('#total_pct_hint');
         hint.textContent = `Total: ${somaPct}%`;
-        hint.style.color = (somaPct===100)? '#16a34a' : '#b91c1c';
+        hint.style.color = (somaPct===100)? '#0FB268' : '#b91c1c';
 
         const horas = {
           jr: totalHoras * (pj/100),
@@ -463,33 +503,41 @@
         };
         const tarifa = { eng_jr:85, eng_pl:145, eng_sr:210, arq_jr:75, arq_pl:125, arq_sr:190 };
 
+        const mC = MULT_COMPLEX[map.complex.value] || 1.0;
+        const mL = MULT_LOD[map.lod.value] || 1.0;
+
         const sub = {
-          eng_jr: qtds.eng_jr * horas.jr * tarifa.eng_jr,
-          eng_pl: qtds.eng_pl * horas.pl * tarifa.eng_pl,
-          eng_sr: qtds.eng_sr * horas.sr * tarifa.eng_sr,
-          arq_jr: qtds.arq_jr * horas.jr * tarifa.arq_jr,
-          arq_pl: qtds.arq_pl * horas.pl * tarifa.arq_pl,
-          arq_sr: qtds.arq_sr * horas.sr * tarifa.arq_sr,
+          eng_jr: qtds.eng_jr * horas.jr * tarifa.eng_jr * mC * mL,
+          eng_pl: qtds.eng_pl * horas.pl * tarifa.eng_pl * mC * mL,
+          eng_sr: qtds.eng_sr * horas.sr * tarifa.eng_sr * mC * mL,
+          arq_jr: qtds.arq_jr * horas.jr * tarifa.arq_jr * mC * mL,
+          arq_pl: qtds.arq_pl * horas.pl * tarifa.arq_pl * mC * mL,
+          arq_sr: qtds.arq_sr * horas.sr * tarifa.arq_sr * mC * mL,
         };
-        valor = Object.values(sub).reduce((a,b)=>a+b,0);
+        const total = Object.values(sub).reduce((a,b)=>a+b,0);
+        valor = total;
 
         $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
         $('#observacoes').textContent = `Distribuição aplicada: Júnior ${pj}%, Pleno ${pp}%, Sênior ${ps}% sobre ${totalHoras}h totais.`;
-        showRange(false);
+        const vmin = valor*0.75, vmax = valor*1.25;
+        $('#faixa').textContent = `R$ ${vmin.toLocaleString('pt-BR',{minimumFractionDigits:2})} - R$ ${vmax.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#sugerido').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        showRange(true);
 
-        $('#formula').textContent = 'Valor Total = Σ (Qtd_prof_nível × Horas_nível × Tarifa_nível_disciplina)';
+        $('#formula').textContent = 'Valor Total = Σ (Qtd_prof_nível × Horas_nível × Tarifa_nível_disciplina × Multiplicador_Complexidade × Multiplicador_LOD)';
         const passos = [
-          `Horas por nível: Júnior ${horas.jr.toFixed(1)}h, Pleno ${horas.pl.toFixed(1)}h, Sênior ${horas.sr.toFixed(1)}h (de ${totalHoras}h).`,
-          `Eng. Júnior: ${qtds.eng_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.eng_jr}/h = R$ ${sub.eng_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          `Eng. Pleno: ${qtds.eng_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.eng_pl}/h = R$ ${sub.eng_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          `Eng. Sênior: ${qtds.eng_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.eng_sr}/h = R$ ${sub.eng_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          `Arq. Júnior: ${qtds.arq_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.arq_jr}/h = R$ ${sub.arq_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          `Arq. Pleno: ${qtds.arq_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.arq_pl}/h = R$ ${sub.arq_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
-          `Arq. Sênior: ${qtds.arq_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.arq_sr}/h = R$ ${sub.arq_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Horas por nível: Júnior ${horas.jr.toFixed(1)}h, Pleno ${horas.pl.toFixed(1)}h, Sênior ${horas.sr.toFixed(1)}h (de ${totalHoras}h). Multiplicadores aplicados: Complexidade ${mC.toFixed(2)}, LOD ${mL.toFixed(2)}.`,
+          `Eng. Júnior: ${qtds.eng_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.eng_jr}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.eng_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Eng. Pleno: ${qtds.eng_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.eng_pl}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.eng_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Eng. Sênior: ${qtds.eng_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.eng_sr}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.eng_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Júnior: ${qtds.arq_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.arq_jr}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.arq_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Pleno: ${qtds.arq_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.arq_pl}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.arq_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Sênior: ${qtds.arq_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.arq_sr}/h × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${sub.arq_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
           `Total = R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`
         ];
         $('#passos').innerHTML = passos.map(x=>`<li>${x}</li>`).join('');
         $('#obs').innerHTML = [
+          'Multiplicadores aplicados conforme Complexidade e LOD.',
           'A soma dos percentuais deve ser 100%.',
           'Ajuste horas totais, quantidades e tarifas conforme o escopo real.',
           'Some BDI/impostos e despesas reembolsáveis segundo sua política.'
@@ -525,7 +573,7 @@
         if(e.target.closest('input,select,textarea')){ updateResumo(); save();
           if(e.target.id==='pct_jr' || e.target.id==='pct_pl' || e.target.id==='pct_sr'){
             const soma = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
-            const hint = $('#total_pct_hint'); hint.textContent = `Total: ${soma}%`; hint.style.color = (soma===100)? '#16a34a' : '#b91c1c';
+            const hint = $('#total_pct_hint'); hint.textContent = `Total: ${soma}%`; hint.style.color = (soma===100)? '#0FB268' : '#b91c1c';
           }
         }
       });
@@ -536,9 +584,9 @@
 
     // init
     load(); updateResumo(); 
-    // initialize hint color
     const somaInit = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
-    const hintInit = $('#total_pct_hint'); hintInit.textContent = `Total: ${somaInit}%`; hintInit.style.color = (somaInit===100)? '#16a34a' : '#b91c1c';
+    const hintInit = $('#total_pct_hint'); hintInit.textContent = `Total: ${somaInit}%`; hintInit.style.color = (somaInit===100)? '#0FB268' : '#b91c1c';
+    applyCalcModeUI();
   </script>
 </body>
 </html>
