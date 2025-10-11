@@ -1,9 +1,9 @@
-!doctype html>
+<!doctype html>
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SIPP BIM — Simulador (One-Page)</title>
+  <title>SIPP BIM — Simulador (One-Page) V4</title>
   <style>
     :root{
       --bg:#f6f8fb; --card:#fff; --ink:#1f2937; --muted:#6b7280;
@@ -16,24 +16,13 @@
     header{margin-bottom:16px}
     h1{margin:0 0 6px;font-size:22px}
     .sub{color:var(--muted);font-size:13px}
-    .grid{
-      display:grid; gap:16px;
-      grid-template-columns: 1.3fr .7fr;
-    }
+    .grid{ display:grid; gap:16px; grid-template-columns: 1.3fr .7fr; }
     @media (max-width:980px){ .grid{grid-template-columns: 1fr} }
 
-    .card{
-      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-    .card .hd{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 16px; border-bottom:1px solid var(--line);
-    }
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .card .hd{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); }
     .card .hd h2{margin:0;font-size:16px}
-    .card .hd .toggle{
-      border:0;background:transparent;color:var(--brand);cursor:pointer;font-weight:600;
-    }
+    .card .hd .toggle{ border:0;background:transparent;color:var(--brand);cursor:pointer;font-weight:600; }
     .card .bd{padding:16px; display:block}
     .card.collapsed .bd{display:none}
 
@@ -41,38 +30,46 @@
     @media (max-width:680px){ .form-grid{grid-template-columns: 1fr} }
     label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
     input[type="text"], input[type="number"], select, textarea{
-      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff;
-      font:inherit;
+      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font:inherit;
     }
     .hint{font-size:12px;color:var(--muted)}
     .note{display:flex;gap:8px;align-items:flex-start;background:#eef2ff;border:1px solid #dbeafe;padding:10px 12px;border-radius:10px;font-size:13px}
 
-    /* Lateral fixa */
     aside{position:sticky; top:16px; height:fit-content; display:flex; flex-direction:column; gap:16px}
     .summary li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
     .summary li:last-child{border-bottom:0}
-    .btn{
-      appearance:none; border:0; border-radius:12px; padding:12px 16px;
-      font-weight:700; cursor:pointer;
-    }
+    .btn{ appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; }
     .btn.primary{background:var(--brand); color:#fff}
     .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted)}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+    .pill.selected{border-color:var(--brand);color:var(--brand);background:#eff6ff}
+
+    .result-details{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none}
+    .range-box{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+    .range-box .k{color:var(--muted);font-size:12px}
+    .range-box .v{font-weight:800}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12.5px; background:#0b1424; color:#d1e2ff; padding:10px 12px;border-radius:10px; overflow:auto}
+    ol.steps{margin:8px 0 0 16px; padding:0}
+    ol.steps li{margin:6px 0}
+    ul.obs{margin:8px 0 0 18px;padding:0}
+    ul.obs li{margin:4px 0;color:#374151}
+    .hide{display:none}
+
+    .inline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#1d4ed8;border:1px solid #dbeafe}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>Simulador de Preços de Projetos e Serviços BIM — SIPP BIM</h1>
-      <div class="sub">Tudo em uma página. Preencha os blocos à esquerda, revise à direita e clique em “Simular Custo”.</div>
+      <div class="sub">Preencha, clique em “Simular Custo” e veja o detalhamento com transparência.</div>
     </header>
 
     <div class="grid">
-      <!-- COLUNA ESQUERDA (conteúdo) -->
       <main class="stack" style="display:flex;flex-direction:column;gap:16px">
 
-        <!-- 1. Dados do Projeto/Serviço -->
         <section class="card" data-section="dados">
           <div class="hd">
             <h2>1. Dados do Projeto ou Serviço</h2>
@@ -91,7 +88,7 @@
                 <input id="area" type="number" min="0" step="1" placeholder="ex: 1000"/>
               </div>
               <div>
-                <label for="local">Localidade (UF/Município) <span class="hint">apenas para referência contextual</span></label>
+                <label for="local">Localidade (UF/Município)</label>
                 <input id="local" type="text" placeholder="ex: SP, RJ, AM"/>
               </div>
               <div>
@@ -112,7 +109,6 @@
           </div>
         </section>
 
-        <!-- 2. Tipo de Cálculo -->
         <section class="card" data-section="tipo">
           <div class="hd">
             <h2>2. Defina Tipo de Cálculo</h2>
@@ -124,22 +120,24 @@
               <div><strong>Atenção:</strong> escolha no item 4 a base Sinduscon/Região para usar o cálculo por m².</div>
             </div>
             <div style="margin-top:12px;display:grid;gap:10px">
-              <label><input type="radio" name="calc" value="m2" checked> Valor por metro quadrado (R$/m²)</label>
-              <label><input type="radio" name="calc" value="hora"> Valor por hora técnica (R$/h) — Estimativa</label>
-              <label><input type="radio" name="calc" value="phoras"> Por Hora Técnica dos Profissionais Envolvidos</label>
-              <label><input type="radio" name="calc" value="escopo"> Valor fechado por escopo — Estimativa</label>
+              <label class="inline"><input type="radio" name="calc" value="m2" checked> Valor por metro quadrado (R$/m²)</label>
+              <label class="inline"><input type="radio" name="calc" value="hora"> Valor por hora técnica (R$/h) — Estimativa <span class="badge">Blended</span></label>
+              <label class="inline"><input type="radio" name="calc" value="phoras"> Por Hora Técnica dos Profissionais Envolvidos</label>
+              <div class="inline">
+                <label class="inline"><input type="radio" name="calc" value="escopo"> Valor fechado por escopo — Estimativa</label>
+                <input id="preco_escopo" type="number" min="0" step="50" placeholder="Informe o preço fechado (R$)" class="hide">
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- 3. Perfil dos Profissionais -->
         <section class="card" data-section="perfil">
           <div class="hd">
             <h2>3. Defina o Perfil dos Profissionais</h2>
             <button class="toggle" data-toggle>Recolher</button>
           </div>
           <div class="bd">
-            <div class="hint" style="margin-bottom:10px">Valores médios Brasil. Informe quantos profissionais atuarão.</div>
+            <div class="hint" style="margin-bottom:10px">Informe quantos profissionais atuarão em cada perfil e a distribuição de horas.</div>
             <div class="form-grid">
               <div>
                 <label>Engenheiro Júnior (R$ 85/h)</label>
@@ -154,33 +152,64 @@
                 <input id="qtd_eng_sr" type="number" min="0" step="1" value="0">
               </div>
               <div>
-                <label>Arquiteto (R$ 75/h)</label>
-                <input id="qtd_arq" type="number" min="0" step="1" value="0">
+                <label>Arquiteto Júnior (R$ 75/h)</label>
+                <input id="qtd_arq_jr" type="number" min="0" step="1" value="0">
+              </div>
+              <div>
+                <label>Arquiteto Pleno (R$ 125/h)</label>
+                <input id="qtd_arq_pl" type="number" min="0" step="1" value="0">
+              </div>
+              <div>
+                <label>Arquiteto Sênior (R$ 190/h)</label>
+                <input id="qtd_arq_sr" type="number" min="0" step="1" value="0">
+              </div>
+            </div>
+
+            <hr style="border:none;border-top:1px dashed var(--line);margin:14px 0">
+
+            <div class="form-grid">
+              <div>
+                <label>Horas totais estimadas do projeto (todas as disciplinas)</label>
+                <input id="horas_totais" type="number" min="0" step="10" value="240">
+              </div>
+              <div></div>
+              <div>
+                <label>Percentual Júnior (%)</label>
+                <input id="pct_jr" type="number" min="0" max="100" step="1" value="20">
+              </div>
+              <div>
+                <label>Percentual Pleno (%)</label>
+                <input id="pct_pl" type="number" min="0" max="100" step="1" value="40">
+              </div>
+              <div>
+                <label>Percentual Sênior (%)</label>
+                <input id="pct_sr" type="number" min="0" max="100" step="1" value="40">
+              </div>
+              <div>
+                <div class="hint" id="total_pct_hint">Total: 100%</div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 4. Base de Cálculo -->
         <section class="card" data-section="base">
           <div class="hd">
             <h2>4. Base de Cálculo Referencial</h2>
             <button class="toggle" data-toggle>Recolher</button>
           </div>
           <div class="bd">
-            <div class="actions" style="margin-bottom:10px">
-              <span class="pill">Sinduscon-PA (Norte)</span>
-              <span class="pill">Sinduscon-PI (Nordeste)</span>
-              <span class="pill">Sinduscon-SP (Sudeste)</span>
-              <span class="pill">Sinduscon-PR (Sul)</span>
-              <span class="pill">Sinduscon-GO (Centro-Oeste)</span>
+            <div class="actions" id="bases" style="margin-bottom:10px">
+              <span class="pill" data-base="PA" data-cub="2164.98">Sinduscon-PA (Norte)</span>
+              <span class="pill" data-base="PI" data-cub="1980.00">Sinduscon-PI (Nordeste)</span>
+              <span class="pill" data-base="SP" data-cub="3390.00">Sinduscon-SP (Sudeste)</span>
+              <span class="pill" data-base="PR" data-cub="2850.00">Sinduscon-PR (Sul)</span>
+              <span class="pill" data-base="GO" data-cub="2560.00">Sinduscon-GO (Centro-Oeste)</span>
             </div>
             <div class="hint">Nota: Para m², selecione uma base Sinduscon.</div>
           </div>
         </section>
       </main>
 
-      <!-- COLUNA DIREITA (painel lateral) -->
       <aside>
         <section class="card">
           <div class="hd"><h2>Resumo</h2></div>
@@ -191,6 +220,7 @@
               <li><span>Complexidade</span><strong id="r_complex">—</strong></li>
               <li><span>LOD</span><strong id="r_lod">—</strong></li>
               <li><span>Modelo</span><strong id="r_calc">m²</strong></li>
+              <li><span>Base</span><strong id="r_base">—</strong></li>
             </ul>
           </div>
         </section>
@@ -199,7 +229,28 @@
           <div class="hd"><h2>Resultado</h2></div>
           <div class="bd">
             <div style="font-size:28px;font-weight:800" id="resultado">R$ —</div>
-            <div class="hint" id="observacoes">Observações do cálculo aparecerão aqui.</div>
+            <div class="hint" id="observacoes">Clique em “Simular Custo” para ver detalhes.</div>
+
+            <div class="result-details" id="detalhes">
+              <div class="range-box" id="box-faixa">
+                <div class="k">Faixa Estimada</div>
+                <div class="v" id="faixa">R$ — a R$ —</div>
+              </div>
+              <div class="range-box" id="box-sugerido">
+                <div class="k">Valor Sugerido (média)</div>
+                <div class="v" id="sugerido">R$ —</div>
+              </div>
+
+              <div style="margin-top:8px;font-weight:700">Fórmula utilizada</div>
+              <div class="mono" id="formula">—</div>
+
+              <div style="margin-top:8px;font-weight:700">Passos do cálculo</div>
+              <ol class="steps" id="passos"></ol>
+
+              <div style="margin-top:8px;font-weight:700">Observações sobre o Cálculo</div>
+              <ul class="obs" id="obs"></ul>
+            </div>
+
             <div style="height:8px"></div>
             <button class="btn primary" id="btnSimular">Simular Custo</button>
             <div style="height:8px"></div>
@@ -211,12 +262,10 @@
   </div>
 
   <script>
-    // Util: salva/recupera estado
-    const KEY="sippbim:v1";
+    const KEY="sippbim:v4";
     const $ = (sel,ctx=document)=>ctx.querySelector(sel);
     const $$ = (sel,ctx=document)=>Array.from(ctx.querySelectorAll(sel));
 
-    // Colapsar/expandir
     $$('[data-toggle]').forEach(btn=>{
       btn.addEventListener('click',()=>{
         const card = btn.closest('.card');
@@ -225,7 +274,6 @@
       });
     });
 
-    // Auto-resumo
     const map = {
       tipo: $('#tipo'),
       area: $('#area'),
@@ -233,7 +281,27 @@
       lod: $('#lod'),
       calc: ()=>document.querySelector('input[name="calc"]:checked')?.value || 'm2',
       r_tipo: $('#r_tipo'), r_area: $('#r_area'), r_complex: $('#r_complex'), r_lod: $('#r_lod'), r_calc: $('#r_calc'),
+      r_base: $('#r_base')
     };
+
+    const basesEl = $('#bases');
+    let base = { sigla: null, cub: null };
+    basesEl.addEventListener('click', (e)=>{
+      const p = e.target.closest('.pill'); if(!p) return;
+      $$('.pill', basesEl).forEach(x=>x.classList.remove('selected'));
+      p.classList.add('selected');
+      base.sigla = p.dataset.base;
+      base.cub = parseFloat(p.dataset.cub);
+      map.r_base.textContent = `${p.textContent.trim()} — CUB R$ ${base.cub.toLocaleString('pt-BR', {minimumFractionDigits:2})}/m²`;
+      save();
+    });
+
+    // Escopo input toggle
+    document.addEventListener('change', e=>{
+      if(e.target.name==='calc'){
+        $('#preco_escopo').classList.toggle('hide', map.calc()!=='escopo');
+      }
+    });
 
     function updateResumo(){
       map.r_tipo.textContent = map.tipo.value;
@@ -243,17 +311,18 @@
       map.r_calc.textContent = map.calc().toUpperCase();
     }
 
-    // Persistência
     function save(){
       const state = {
         tipo: map.tipo.value, area: map.area.value, complex: map.complex.value, lod: map.lod.value,
         calc: map.calc(),
         qtds: {
-          eng_jr: $('#qtd_eng_jr').value,
-          eng_pl: $('#qtd_eng_pl').value,
-          eng_sr: $('#qtd_eng_sr').value,
-          arq: $('#qtd_arq').value
-        }
+          eng_jr: +$('#qtd_eng_jr').value, eng_pl: +$('#qtd_eng_pl').value, eng_sr: +$('#qtd_eng_sr').value,
+          arq_jr: +$('#qtd_arq_jr').value, arq_pl: +$('#qtd_arq_pl').value, arq_sr: +$('#qtd_arq_sr').value
+        },
+        horas_totais: +$('#horas_totais').value,
+        pcts: { jr:+$('#pct_jr').value, pl:+$('#pct_pl').value, sr:+$('#pct_sr').value },
+        base,
+        preco_escopo: +$('#preco_escopo').value || 0
       };
       localStorage.setItem(KEY, JSON.stringify(state));
     }
@@ -268,61 +337,208 @@
       $('#qtd_eng_jr').value = s.qtds?.eng_jr ?? 0;
       $('#qtd_eng_pl').value = s.qtds?.eng_pl ?? 0;
       $('#qtd_eng_sr').value = s.qtds?.eng_sr ?? 0;
-      $('#qtd_arq').value    = s.qtds?.arq ?? 0;
+      $('#qtd_arq_jr').value = s.qtds?.arq_jr ?? 0;
+      $('#qtd_arq_pl').value = s.qtds?.arq_pl ?? 0;
+      $('#qtd_arq_sr').value = s.qtds?.arq_sr ?? 0;
+      $('#horas_totais').value = s.horas_totais ?? 240;
+      $('#pct_jr').value = s.pcts?.jr ?? 20;
+      $('#pct_pl').value = s.pcts?.pl ?? 40;
+      $('#pct_sr').value = s.pcts?.sr ?? 40;
+      if(s.base?.sigla){
+        const p = $(`.pill[data-base="${s.base.sigla}"]`, basesEl);
+        if(p){ p.classList.add('selected'); }
+        base = s.base;
+        if(base.cub){
+          map.r_base.textContent = `${$(`.pill[data-base="${s.base.sigla}"]`).textContent.trim()} — CUB R$ ${base.cub.toLocaleString('pt-BR', {minimumFractionDigits:2})}/m²`;
+        }
+      }
+      if(s.preco_escopo){ $('#preco_escopo').value = s.preco_escopo; }
+      $('#preco_escopo').classList.toggle('hide', map.calc()!=='escopo');
       updateResumo();
     }
 
-    // Disparadores
+    // Parâmetros
+    const PERC_FAIXA = {
+      'Arquitetônico': [0.015, 0.020],
+      'Estrutural':    [0.012, 0.018],
+      'Instalações':   [0.012, 0.018],
+      'Consultoria':   [0.008, 0.012]
+    };
+    const MULT_COMPLEX = { baixa:0.90, media:1.00, alta:1.20 };
+    const MULT_LOD = { 'LOD 200':0.90, 'LOD 300':1.00, 'LOD 350':1.10, 'LOD 400':1.20 };
+
+    function showDetails(show){ $('#detalhes').style.display = show ? 'block' : 'none'; }
+    function showRange(show){
+      $('#box-faixa').classList.toggle('hide', !show);
+      $('#box-sugerido').classList.toggle('hide', !show);
+    }
+
+    function recalculate(){
+      const modelo = map.calc();
+      const area = parseFloat(map.area.value||0);
+      let valor = 0;
+      showDetails(true);
+
+      if(modelo==='m2'){
+        const cub = parseFloat(base.cub || 0);
+        if(!cub || !area){
+          $('#resultado').textContent = 'R$ —';
+          $('#observacoes').textContent = 'Informe a área e selecione a base Sinduscon.';
+          showRange(false);
+          $('#formula').textContent = '—';
+          $('#passos').innerHTML = ''; $('#obs').innerHTML = '';
+          return;
+        }
+        const [pmin, pmax] = PERC_FAIXA[map.tipo.value] || [0.015, 0.02];
+        const mC = MULT_COMPLEX[map.complex.value] || 1.0;
+        const mL = MULT_LOD[map.lod.value] || 1.0;
+
+        const vmin = area * cub * pmin * mC * mL;
+        const vmax = area * cub * pmax * mC * mL;
+        const vsug = (vmin + vmax) / 2;
+        valor = vsug;
+
+        $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#observacoes').textContent = `Base: R$ ${cub.toLocaleString('pt-BR',{minimumFractionDigits:2})}/m² × Área informada. Fatores aplicados.`;
+        $('#faixa').textContent = `R$ ${vmin.toLocaleString('pt-BR',{minimumFractionDigits:2})} - R$ ${vmax.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#sugerido').textContent = `R$ ${vsug.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        showRange(true);
+
+        $('#formula').textContent = 'Valor Total = Área × Valor CUB × Percentual Projeto × Multiplicador Complexidade × Multiplicador LOD';
+        const passos = [
+          `Valor CUB base (selecionado): R$ ${cub.toLocaleString('pt-BR',{minimumFractionDigits:2})}/m²`,
+          `Percentual para projeto ${map.tipo.value}: ${(pmin*100).toFixed(1)}% a ${(pmax*100).toFixed(1)}% do CUB`,
+          `Aplicação dos multiplicadores de Complexidade (${mC.toFixed(2)}) e LOD (${mL.toFixed(2)})`,
+          `Valor mínimo: ${area}m² × R$ ${cub.toLocaleString('pt-BR',{minimumFractionDigits:2})}/m² × ${(pmin*100).toFixed(1)}% × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${vmin.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Valor máximo: ${area}m² × R$ ${cub.toLocaleString('pt-BR',{minimumFractionDigits:2})}/m² × ${(pmax*100).toFixed(1)}% × ${mC.toFixed(2)} × ${mL.toFixed(2)} = R$ ${vmax.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Valor sugerido (média): R$ ${vsug.toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+        ];
+        $('#passos').innerHTML = passos.map(x=>`<li>${x}</li>`).join('');
+        const obsList = [
+          `Base de Referência: ${map.r_base.textContent || '—'}`,
+          `Tipo de Projeto Principal: ${map.tipo.value}`,
+          `Complexidade: ${map.complex.options[map.complex.selectedIndex].text} (multiplicador: ${mC.toFixed(2)})`,
+          `LOD: ${map.lod.value} (multiplicador: ${mL.toFixed(2)})`,
+          `Área do Projeto: ${area} m²`,
+          `Nota: Para cálculo por m², horas de profissionais não entram diretamente.`
+        ];
+        $('#obs').innerHTML = obsList.map(x=>`<li>${x}</li>`).join('');
+
+      } else if(modelo==='hora'){
+        const tarifaHora = 160; // parâmetro ajustável
+        const horas = 120;      // parâmetro ajustável
+        valor = tarifaHora * horas;
+        $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#observacoes').textContent = `Estimativa por hora técnica: ${horas}h × R$ ${tarifaHora.toFixed(2)}/h.`;
+        showRange(false);
+        $('#formula').textContent = 'Valor Total = Horas Estimadas × Tarifa por Hora (R$/h)';
+        $('#passos').innerHTML = [
+          `Definição de horas estimadas: ${horas} h`,
+          `Tarifa por hora técnica adotada: R$ ${tarifaHora.toFixed(2)}/h`,
+          `Cálculo: ${horas} h × R$ ${tarifaHora.toFixed(2)}/h = R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+        ].map(x=>`<li>${x}</li>`).join('');
+        $('#obs').innerHTML = [
+          'Modelo de custo por hora técnica única (blended rate).',
+          'Ajuste horas e tarifa conforme o escopo real e a senioridade da equipe.',
+          'Impostos/BDI e reembolsáveis podem ser adicionados à parte.'
+        ].map(x=>`<li>${x}</li>`).join('');
+
+      } else if(modelo==='phoras'){
+        const totalHoras = +$('#horas_totais').value || 0;
+        const pj = +$('#pct_jr').value || 0, pp = +$('#pct_pl').value || 0, ps = +$('#pct_sr').value || 0;
+        const somaPct = pj+pp+ps;
+        const hint = $('#total_pct_hint');
+        hint.textContent = `Total: ${somaPct}%`;
+        hint.style.color = (somaPct===100)? '#16a34a' : '#b91c1c';
+
+        const horas = {
+          jr: totalHoras * (pj/100),
+          pl: totalHoras * (pp/100),
+          sr: totalHoras * (ps/100),
+        };
+
+        const qtds = {
+          eng_jr:+$('#qtd_eng_jr').value, eng_pl:+$('#qtd_eng_pl').value, eng_sr:+$('#qtd_eng_sr').value,
+          arq_jr:+$('#qtd_arq_jr').value, arq_pl:+$('#qtd_arq_pl').value, arq_sr:+$('#qtd_arq_sr').value
+        };
+        const tarifa = { eng_jr:85, eng_pl:145, eng_sr:210, arq_jr:75, arq_pl:125, arq_sr:190 };
+
+        const sub = {
+          eng_jr: qtds.eng_jr * horas.jr * tarifa.eng_jr,
+          eng_pl: qtds.eng_pl * horas.pl * tarifa.eng_pl,
+          eng_sr: qtds.eng_sr * horas.sr * tarifa.eng_sr,
+          arq_jr: qtds.arq_jr * horas.jr * tarifa.arq_jr,
+          arq_pl: qtds.arq_pl * horas.pl * tarifa.arq_pl,
+          arq_sr: qtds.arq_sr * horas.sr * tarifa.arq_sr,
+        };
+        valor = Object.values(sub).reduce((a,b)=>a+b,0);
+
+        $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#observacoes').textContent = `Distribuição aplicada: Júnior ${pj}%, Pleno ${pp}%, Sênior ${ps}% sobre ${totalHoras}h totais.`;
+        showRange(false);
+
+        $('#formula').textContent = 'Valor Total = Σ (Qtd_prof_nível × Horas_nível × Tarifa_nível_disciplina)';
+        const passos = [
+          `Horas por nível: Júnior ${horas.jr.toFixed(1)}h, Pleno ${horas.pl.toFixed(1)}h, Sênior ${horas.sr.toFixed(1)}h (de ${totalHoras}h).`,
+          `Eng. Júnior: ${qtds.eng_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.eng_jr}/h = R$ ${sub.eng_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Eng. Pleno: ${qtds.eng_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.eng_pl}/h = R$ ${sub.eng_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Eng. Sênior: ${qtds.eng_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.eng_sr}/h = R$ ${sub.eng_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Júnior: ${qtds.arq_jr} × ${horas.jr.toFixed(1)}h × R$ ${tarifa.arq_jr}/h = R$ ${sub.arq_jr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Pleno: ${qtds.arq_pl} × ${horas.pl.toFixed(1)}h × R$ ${tarifa.arq_pl}/h = R$ ${sub.arq_pl.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Arq. Sênior: ${qtds.arq_sr} × ${horas.sr.toFixed(1)}h × R$ ${tarifa.arq_sr}/h = R$ ${sub.arq_sr.toLocaleString('pt-BR',{minimumFractionDigits:2})}`,
+          `Total = R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+        ];
+        $('#passos').innerHTML = passos.map(x=>`<li>${x}</li>`).join('');
+        $('#obs').innerHTML = [
+          'A soma dos percentuais deve ser 100%.',
+          'Ajuste horas totais, quantidades e tarifas conforme o escopo real.',
+          'Some BDI/impostos e despesas reembolsáveis segundo sua política.'
+        ].map(x=>`<li>${x}</li>`).join('');
+
+      } else if(modelo==='escopo'){
+        const preco = +($('#preco_escopo').value||0);
+        if(!preco){
+          $('#resultado').textContent = 'R$ —';
+          $('#observacoes').textContent = 'Informe o preço fechado desejado no campo ao lado.';
+          $('#formula').textContent = '—';
+          $('#passos').innerHTML = ''; $('#obs').innerHTML = ''; showRange(false); return;
+        }
+        valor = preco;
+        $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+        $('#observacoes').textContent = `Preço fechado informado pelo usuário.`;
+        showRange(false);
+
+        $('#formula').textContent = 'Valor Total = Preço Fechado Informado';
+        $('#passos').innerHTML = [
+          'Definição de marcos e entregáveis do escopo',
+          'Composição de custos diretos/indiretos e margem acordada'
+        ].map(x=>`<li>${x}</li>`).join('');
+        $('#obs').innerHTML = [
+          'Prever cláusulas de revisão de escopo e reajuste.',
+          'Cronograma e condições de pagamento impactam o preço final.'
+        ].map(x=>`<li>${x}</li>`).join('');
+      }
+    }
+
     ['change','input'].forEach(evt=>{
       document.addEventListener(evt, e=>{
-        if(e.target.closest('input,select,textarea')){ updateResumo(); save(); }
+        if(e.target.closest('input,select,textarea')){ updateResumo(); save();
+          if(e.target.id==='pct_jr' || e.target.id==='pct_pl' || e.target.id==='pct_sr'){
+            const soma = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
+            const hint = $('#total_pct_hint'); hint.textContent = `Total: ${soma}%`; hint.style.color = (soma===100)? '#16a34a' : '#b91c1c';
+          }
+        }
       });
     });
 
-    // Hook de cálculo — plugue sua lógica aqui
-    function recalculate(){
-      const modelo = map.calc(); // 'm2' | 'hora' | 'phoras' | 'escopo'
-      const area = parseFloat(map.area.value||0);
-      // EXEMPLO didático (troque pelas suas funções reais)
-      let valor = 0, obs = '';
-      if(modelo==='m2'){
-        const baseM2 = 65; // <- traga do Sinduscon selecionado
-        valor = area * baseM2;
-        obs = `Base: R$ ${baseM2.toFixed(2)}/m² (Sinduscon selecionado) × Área informada.`;
-      }else if(modelo==='hora'){
-        const tarifaHora = 160; // média estimativa
-        const horas = 120;      // placeholder
-        valor = tarifaHora * horas;
-        obs = `Estimativa por hora técnica: ${horas}h × R$ ${tarifaHora.toFixed(2)}/h.`;
-      }else if(modelo==='phoras'){
-        const hrs = { jr: 60, pl: 80, sr: 40, arq: 60 }; // placeholders
-        const tarifas = { jr:85, pl:145, sr:210, arq:75 };
-        const qtds = {
-          jr: +$('#qtd_eng_jr').value, pl: +$('#qtd_eng_pl').value,
-          sr: +$('#qtd_eng_sr').value, arq: +$('#qtd_arq').value
-        };
-        valor = (qtds.jr*hrs.jr*tarifas.jr) + (qtds.pl*hrs.pl*tarifas.pl) + (qtds.sr*hrs.sr*tarifas.sr) + (qtds.arq*hrs.arq*tarifas.arq);
-        obs = `Somatório de horas por perfil × tarifa (valores médios). Ajuste hrs/tarifas conforme projeto.`;
-      }else if(modelo==='escopo'){
-        valor = 35000; // placeholder
-        obs = `Preço fechado estimativo conforme escopo e complexidade.`;
-      }
-      // Ajustes por complexidade (exemplo simples)
-      const mult = { baixa:0.9, media:1.0, alta:1.25 }[map.complex.value] || 1;
-      valor *= mult; if(mult!==1) obs += ` Fator de complexidade aplicado (${map.complex.value}).`;
-
-      $('#resultado').textContent = isFinite(valor) && valor>0 ? `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}` : 'R$ —';
-      $('#observacoes').textContent = obs;
-    }
-
-    // Botões
     $('#btnSimular').addEventListener('click', recalculate);
-    $('#btnExportar').addEventListener('click', ()=>{
-      alert('Aqui você pode chamar sua exportação para PDF/Planilha.');
-    });
+    $('#btnExportar').addEventListener('click', ()=>{ alert('Aqui você pode chamar sua exportação para PDF/Planilha.'); });
 
-    // Init
-    load(); updateResumo();
+    // init
+    load(); updateResumo(); 
+    // initialize hint color
+    const somaInit = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
+    const hintInit = $('#total_pct_hint'); hintInit.textContent = `Total: ${somaInit}%`; hintInit.style.color = (somaInit===100)? '#16a34a' : '#b91c1c';
   </script>
 </body>
 </html>
