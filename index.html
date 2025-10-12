@@ -3,25 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SIPP BIM — Simulador (One-Page) V8</title>
+  <title>SIPP BIM — Simulador (One-Page) V9</title>
   <style>
     :root{
-      --bg:#f6f8fb; --card:#fff; --ink:#0f172a; --muted:#475569;
-      /* RBIM green (forte) */
+      --card:#fff; --ink:#0f172a; --muted:#cbd5e1;
       --rbim:#0FB268;
       --line:#e5e7eb;
       --radius:14px; --shadow:0 8px 28px rgba(0,0,0,.08);
-      --emerald-bg: rgba(15,178,104,0.16);   /* mais forte que V7 */
-      --emerald-border: rgba(15,178,104,0.45);
+      --emerald-accent: rgba(15,178,104,0.35);
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;background:linear-gradient(135deg,#0a3a28 0%,#0f5c3e 40%,#0a3a28 100%);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,Roboto,Arial}
     .wrap{max-width:1200px;margin:24px auto 48px;padding:0 16px}
     header{margin-bottom:16px;display:flex;flex-direction:column;gap:14px;align-items:center}
     header .brand{display:flex;align-items:center;gap:14px}
-    header img.logo{max-height:70px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
-    h1{margin:0 0 6px;font-size:22px;color:var(--rbim)}
-    .sub{color:#64748b;font-size:13px}
+    header img.logo{max-height:70px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+    h1{margin:0 0 6px;font-size:22px;color:#fff}
+    .sub{color:rgba(255,255,255,.88);font-size:13px;text-shadow:0 1px 0 rgba(0,0,0,.25)}
     .grid{ display:grid; gap:16px; grid-template-columns: 1.3fr .7fr; }
     @media (max-width:980px){ .grid{grid-template-columns: 1fr} }
 
@@ -33,14 +31,9 @@
     .card.collapsed .bd{display:none}
     .locked{opacity:.55; pointer-events:none}
 
-    /* Right-side emerald styling (mais forte) */
-    aside .card.right{
-      background: var(--emerald-bg);
-      border-color: var(--emerald-border);
-    }
-    aside .card.right .hd{
-      border-bottom-color: var(--emerald-border);
-    }
+    /* Right-side cards: branco com leve acento RBIM */
+    aside .card.right{ background:#fff; border-color: var(--emerald-accent); }
+    aside .card.right .hd{ border-bottom-color: var(--emerald-accent); }
 
     .form-grid{display:grid; gap:12px; grid-template-columns: repeat(2, minmax(0,1fr));}
     @media (max-width:680px){ .form-grid{grid-template-columns: 1fr} }
@@ -49,8 +42,8 @@
       width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; font:inherit;
     }
     .hint{font-size:12px;color:#64748b}
-    .note{display:flex;gap:8px;align-items:flex-start;background:#ecfdf5;border:1px solid var(--emerald-border);padding:10px 12px;border-radius:10px;font-size:13px;color:#065f46}
-    .escopo-note{display:none; margin-top:10px; background:rgba(15,178,104,0.12); border:1px dashed var(--emerald-border); padding:10px 12px; border-radius:10px; color:#065f46; font-size:13px}
+    .note{display:flex;gap:8px;align-items:flex-start;background:#ecfdf5;border:1px solid rgba(15,178,104,.35);padding:10px 12px;border-radius:10px;font-size:13px;color:#065f46}
+    .escopo-note{display:none; margin-top:10px; background:rgba(15,178,104,0.12); border:1px dashed rgba(15,178,104,.35); padding:10px 12px; border-radius:10px; color:#065f46; font-size:13px}
 
     aside{position:sticky; top:16px; height:fit-content; display:flex; flex-direction:column; gap:16px}
     .summary li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
@@ -59,14 +52,14 @@
     .btn.primary{background:var(--rbim); color:#fff}
     .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#334155;cursor:pointer;user-select:none}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#334155;cursor:pointer;user-select:none;background:#fff}
     .pill.selected{border-color:var(--rbim);color:var(--rbim);background:#ecfdf5}
 
     .result-details{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none}
     .range-box{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
     .range-box .k{color:#475569;font-size:12px}
     .range-box .v{font-weight:900}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12.5px; background:#0b1424; color:#d1e2ff; padding:10px 12px;border-radius:10px; overflow:auto}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; font-size:12.5px; background:#0b1424; color:#d1e2ff; padding:10px 12px;border-radius:10px; overflow:auto}
     ol.steps{margin:8px 0 0 16px; padding:0}
     ol.steps li{margin:6px 0}
     ul.obs{margin:8px 0 0 18px;padding:0}
@@ -80,7 +73,7 @@
   <div class="wrap">
     <header>
       <div class="brand">
-        <img class="logo" src="sipp.png" alt="RBIM" />
+        <img class="logo" src="RBIM.png" alt="RBIM" />
       </div>
       <h1>Simulador de Preços de Projetos e Serviços BIM — SIPP BIM</h1>
       <div class="sub">Preencha, clique em “Simular Custo” e veja o detalhamento com transparência.</div>
@@ -283,7 +276,7 @@
   </div>
 
   <script>
-    const KEY="sippbim:v8";
+    const KEY="sippbim:v9";
     const $ = (sel,ctx=document)=>ctx.querySelector(sel);
     const $$ = (sel,ctx=document)=>Array.from(ctx.querySelectorAll(sel));
 
@@ -300,7 +293,7 @@
       area: $('#area'),
       complex: $('#complex'),
       lod: $('#lod'),
-      calc: ()=>document.querySelector('input[name="calc"]:checked')?.value || 'm2',
+      calc: ()=>document.querySelector('input[name=\"calc\"]:checked')?.value || 'm2',
       r_tipo: $('#r_tipo'), r_area: $('#r_area'), r_complex: $('#r_complex'), r_lod: $('#r_lod'), r_calc: $('#r_calc'),
       r_base: $('#r_base')
     };
@@ -317,31 +310,28 @@
       save();
     });
 
-    // UI helpers
     function applyCalcModeUI(){
       const mode = map.calc();
       const isM2 = mode==='m2';
       const isPH = mode==='phoras';
-      const perfilCard = document.querySelector('[data-section="perfil"]');
-      const baseCard = document.querySelector('[data-section="base"]');
+      const perfilCard = document.querySelector('[data-section=\"perfil\"]');
+      const baseCard = document.querySelector('[data-section=\"base\"]');
       const note = document.getElementById('m2_note');
 
-      // Atenção note só no M2
       if(note){ note.style.display = isM2 ? 'block' : 'none'; }
 
-      // M2: trava perfil (3); PH: trava base (4); Escopo: libera ambos
       if(isM2){
         perfilCard.classList.add('collapsed'); perfilCard.classList.add('locked');
-        baseCard.classList.remove('locked');
+        baseCard.classList.remove('locked'); baseCard.classList.remove('collapsed'); // EXPANDE item 4
       } else if(isPH){
-        perfilCard.classList.remove('locked'); perfilCard.classList.remove('collapsed'); // deixa aberto
-        baseCard.classList.add('collapsed'); baseCard.classList.add('locked');            // trava base
+        perfilCard.classList.remove('locked'); perfilCard.classList.remove('collapsed'); // abre item 3
+        baseCard.classList.add('collapsed'); baseCard.classList.add('locked');            // trava item 4
       } else { // escopo
         perfilCard.classList.remove('locked');
         baseCard.classList.remove('locked');
       }
 
-      // Ajusta textos dos botões toggle conforme estado atual
+      // Atualiza rótulo dos botões
       $$('[data-section]').forEach(sec=>{
         const btn = sec.querySelector('[data-toggle]');
         if(!btn) return;
@@ -389,7 +379,7 @@
       map.area.value = s.area ?? '';
       map.complex.value = s.complex ?? map.complex.value;
       map.lod.value = s.lod ?? map.lod.value;
-      if(s.calc){ const el = document.querySelector(`input[name="calc"][value="${s.calc}"]`); if(el) el.checked = true; }
+      if(s.calc){ const el = document.querySelector(`input[name=\"calc\"][value=\"${s.calc}\"]`); if(el) el.checked = true; }
       $('#qtd_eng_jr').value = s.qtds?.eng_jr ?? 0;
       $('#qtd_eng_pl').value = s.qtds?.eng_pl ?? 0;
       $('#qtd_eng_sr').value = s.qtds?.eng_sr ?? 0;
@@ -401,11 +391,11 @@
       $('#pct_pl').value = s.pcts?.pl ?? 40;
       $('#pct_sr').value = s.pcts?.sr ?? 40;
       if(s.base?.sigla){
-        const p = $(`.pill[data-base="${s.base.sigla}"]`, basesEl);
+        const p = $(`.pill[data-base=\"${s.base.sigla}\"]`, basesEl);
         if(p){ p.classList.add('selected'); }
         base = s.base;
         if(base.cub){
-          map.r_base.textContent = `${$(`.pill[data-base="${s.base.sigla}"]`).textContent.trim()} — CUB R$ ${base.cub.toLocaleString('pt-BR', {minimumFractionDigits:2})}/m²`;
+          map.r_base.textContent = `${$(`.pill[data-base=\"${s.base.sigla}\"]`).textContent.trim()} — CUB R$ ${base.cub.toLocaleString('pt-BR', {minimumFractionDigits:2})}/m²`;
         }
       }
       if(s.preco_escopo){ $('#preco_escopo').value = s.preco_escopo; }
@@ -551,7 +541,7 @@
           $('#formula').textContent = '—';
           $('#passos').innerHTML = ''; $('#obs').innerHTML = ''; showRange(false); return;
         }
-        valor = preco;
+        const valor = preco;
         $('#resultado').textContent = `R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
         $('#observacoes').textContent = `Preço fechado informado pelo usuário.`;
         showRange(false);
@@ -583,12 +573,13 @@
     $('#btnExportar').addEventListener('click', ()=>{ alert('Aqui você pode chamar sua exportação para PDF/Planilha.'); });
 
     // init
-    load(); updateResumo(); 
-    const somaInit = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
-    const hintInit = $('#total_pct_hint'); hintInit.textContent = `Total: ${somaInit}%`; hintInit.style.color = (somaInit===100)? '#0FB268' : '#b91c1c';
-    applyCalcModeUI();
+    (function init(){
+      load(); updateResumo();
+      const somaInit = (+$('#pct_jr').value||0)+(+$('#pct_pl').value||0)+(+$('#pct_sr').value||0);
+      const hintInit = $('#total_pct_hint'); hintInit.textContent = `Total: ${somaInit}%`; hintInit.style.color = (somaInit===100)? '#0FB268' : '#b91c1c';
+      applyCalcModeUI();
+    })();
   </script>
 </body>
 </html>
-
 
