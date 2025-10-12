@@ -611,45 +611,89 @@ function exportarParaPDF () {
   h.innerHTML = `<h1>Simulador de Preços de Projetos BIM — SIPP BIM</h1>`;
   conteudoPDF.appendChild(h);
 
-  // Dados do projeto
-  const dados = document.createElement('div'); dados.className = 'pdf-section';
-  dados.innerHTML = `
-    <h2>Dados do Projeto</h2>
-    <p><strong>Tipo de Projeto:</strong> ${tipoProjetoEl?.selectedOptions?.[0]?.text || tipoProjetoEl?.value || '-'}</p>
-    <p><strong>Área:</strong> ${areaEl?.value || '-'} m²</p>
-    <p><strong>Complexidade:</strong> ${complexEl?.value || '-'}</p>
-    <p><strong>LOD:</strong> ${lodEl?.value || '-'}</p>
-    <p><strong>Base de Cálculo:</strong> ${baseCalcEl?.selectedOptions?.[0]?.text || baseCalcEl?.value || '-'}</p>
-    <p><strong>Tipo de Cálculo:</strong> ${
-      modeloSelecionado==='m2' ? 'Por metro quadrado' :
-      modeloSelecionado==='hora' ? 'Por hora técnica' :
-      modeloSelecionado==='hora-perfil' ? 'Por Hora Técnica dos Profissionais Envolvidos' :
-      'Por escopo'
-    }</p>
-    <p><strong>Localidade:</strong> ${localidadeEl?.value || 'Não informado'}</p>
-  `;
-  conteudoPDF.appendChild(dados);
-
-  // Resultados (usa o conteúdo já renderizado no Resumo)
-  const resultados = document.createElement('div'); resultados.className='pdf-section';
-  const faixa = resumo.querySelector('[data-id="faixa"], .faixa, .range');
-  const sugerido = resumo.querySelector('[data-id="sugerido"], .sugerido, .suggested');
-  resultados.innerHTML = `
-    <h2>Resultados da Simulação</h2>
-    <div class="pdf-resultado">
-      <p><strong>Faixa Estimada:</strong> ${faixa?.textContent?.trim() || '-'}</p>
-      <p><strong>Valor Sugerido:</strong> ${sugerido?.textContent?.trim() || '-'}</p>
-    </div>
-  `;
-  conteudoPDF.appendChild(resultados);
-
-  // Explicação detalhada (se houver algum container no V9)
-  const explicacaoDom = document.querySelector('#explicacao, .explicacao, .explain, .detalhe');
-  if (explicacaoDom) {
-    const exp = document.createElement('div'); exp.className='pdf-section';
-    exp.innerHTML = `<h2>Explicação Detalhada do Cálculo</h2>${explicacaoDom.innerHTML}`;
-    conteudoPDF.appendChild(exp);
+// ---------- util: pegar pares "rótulo: valor" do Resumo ----------
+function pickFromResumo(label){
+  const resumo = document.querySelector('aside .summary, aside .card.right');
+  if(!resumo) return '';
+  // tenta li/rows com "rótulo valor"
+  const items = resumo.querySelectorAll('li, .row, .item, p, div');
+  for(const el of items){
+    const t = el.textContent.replace(/\s+/g,' ').trim();
+    if(new RegExp(`^${label}\\b`, 'i').test(t)){
+      // tenta pegar texto após “:”
+      const m = t.split(':').slice(1).join(':').trim();
+      if(m) return m;
+      // ou um <b>/<span> dentro
+      const val = el.querySelector('b, strong, span, .value');
+      if(val) return val.textContent.trim();
+      return t;
+    }
   }
+  return '';
+}
+
+// ---------- DADOS DO PROJETO ----------
+const dados = document.createElement('div'); 
+dados.className = 'pdf-section';
+
+const tipoProjeto   = pickFromResumo('Tipo')        || (document.querySelector('#tipo, select[name="tipo"]')?.selectedOptions?.[0]?.text || '-');
+const areaProjeto   = pickFromResumo('Área')        || (document.querySelector('#area, input[name="area"]')?.value ? `${document.querySelector('#area, input[name="area"]').value} m²` : '-');
+const complexidade  = pickFromResumo('Complexidade')|| (document.querySelector('#complexidade, select[name="complexidade"]')?.value || '-');
+const lod           = pickFromResumo('LOD')         || (document.querySelector('#lod, select[name="lod"]')?.value || '-');
+const modelo        = pickFromResumo('Modelo')      || (document.querySelector('input[name="modelo"]:checked')?.value || '-');
+const baseCalculo   = pickFromResumo('Base')        || (document.querySelector('#base_calc, select[name="base_calc"]')?.selectedOptions?.[0]?.text || '-');
+const localidade    = document.querySelector('#localidade, input[name="localidade"]')?.value || pickFromResumo('Localidade') || 'Não informado';
+
+dados.innerHTML = `
+  <h2>Dados do Projeto</h2>
+  <p><strong>Tipo de Projeto:</strong> ${tipoProjeto}</p>
+  <p><strong>Área:</strong> ${areaProjeto}</p>
+  <p><strong>Complexidade:</strong> ${complexidade}</p>
+  <p><strong>LOD:</strong> ${lod}</p>
+  <p><strong>Base de Cálculo:</strong> ${baseCalculo}</p>
+  <p><strong>Tipo de Cálculo:</strong> ${
+    /m2|M2|metro/i.test(modelo) ? 'Por metro quadrado' :
+    /hora-perfil/i.test(modelo)  ? 'Por Hora Técnica dos Profissionais Envolvidos' :
+    /hora/i.test(modelo)         ? 'Por hora técnica' : 
+                                   (modelo || '—')
+  }</p>
+  <p><strong>Localidade:</strong> ${localidade}</p>
+`;
+conteudoPDF.appendChild(dados);
+
+// ---------- RESULTADOS ----------
+const resultados = document.createElement('div'); 
+resultados.className = 'pdf-section';
+
+const faixaEstimada = pickFromResumo('Faixa Estimada') || document.querySelector('[data-id="faixa"], .faixa, .range')?.textContent?.trim() || '-';
+const valorSugerido = pickFromResumo('Valor Sugerido') || document.querySelector('[data-id="sugerido"], .sugerido, .suggested')?.textContent?.trim() || '-';
+
+resultados.innerHTML = `
+  <h2>Resultados da Simulação</h2>
+  <div class="pdf-resultado">
+    <p><strong>Faixa Estimada:</strong> ${faixaEstimada}</p>
+    <p><strong>Valor Sugerido:</strong> ${valorSugerido}</p>
+  </div>
+`;
+conteudoPDF.appendChild(resultados);
+
+// ---------- FÓRMULA / PASSOS / OBSERVAÇÕES (clona bloco da V9) ----------
+function cloneExplainCard(){
+  // tenta achar um card com títulos conhecidos
+  const candidates = Array.from(document.querySelectorAll('.card, section, article, .explain, #explicacao'))
+    .filter(c=>{
+      const txt = c.textContent.toLowerCase();
+      return txt.includes('fórmula') && (txt.includes('passos') || txt.includes('observa') || txt.includes('cálculo'));
+    });
+  return candidates[0] || null;
+}
+const explainCard = cloneExplainCard();
+if(explainCard){
+  const expWrap = document.createElement('div'); 
+  expWrap.className = 'pdf-section';
+  expWrap.innerHTML = `<h2>Explicação Detalhada do Cálculo</h2>${explainCard.innerHTML}`;
+  conteudoPDF.appendChild(expWrap);
+}
 
   // Rodapé
   const f = document.createElement('div'); f.className='pdf-footer';
