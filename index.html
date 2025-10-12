@@ -568,9 +568,116 @@
         }
       });
     });
+    /* === EXPORTAÇÃO PARA PDF (V9) === */
+function exportarParaPDF () {
+  // 1) Garantir que há resultado simulado (usa o card/summary da direita)
+  const resumo = document.querySelector('aside .summary, aside .card.right');
+  if (!resumo || !resumo.innerText.trim()) {
+    alert('Por favor, realize uma simulação antes de exportar o relatório.');
+    return;
+  }
+
+  // 2) Coletar dados básicos dos inputs (ajuste os IDs se forem diferentes)
+  const tipoProjetoEl   = document.querySelector('#tipo, select[name="tipo"]');
+  const areaEl          = document.querySelector('#area, input[name="area"]');
+  const complexEl       = document.querySelector('#complexidade, select[name="complexidade"]');
+  const lodEl           = document.querySelector('#lod, select[name="lod"]');
+  const localidadeEl    = document.querySelector('#localidade, input[name="localidade"]');
+  const baseCalcEl      = document.querySelector('#base_calc, select[name="base_calc"]');
+
+  // modelo (M2 / hora / hora-perfil / escopo)
+  const modeloSelecionado =
+    (document.querySelector('input[name="modelo"]:checked')?.value) || 'm2';
+
+  // 3) Montar conteúdo do PDF (cabeçalho + dados + resumo + explicação)
+  const conteudoPDF = document.createElement('div');
+  conteudoPDF.className = 'pdf-content';
+
+  const estilosPDF = document.createElement('style');
+  estilosPDF.textContent = `
+    .pdf-content{font-family:Arial,sans-serif;color:#333;line-height:1.5;}
+    .pdf-header{text-align:center;margin-bottom:20px;}
+    .pdf-header h1{color:#0077b6;font-size:24px;margin-bottom:10px;}
+    .pdf-section{margin-bottom:20px;}
+    .pdf-section h2{color:#0077b6;font-size:18px;border-bottom:1px solid #0077b6;padding-bottom:5px;margin-bottom:10px;}
+    .pdf-resultado{padding:10px;margin:10px 0;border-left:4px solid #0077b6;background-color:#f0f8ff;}
+    .pdf-footer{margin-top:30px;text-align:center;font-size:12px;color:#666;}
+  `;
+  conteudoPDF.appendChild(estilosPDF);
+
+  // Cabeçalho
+  const h = document.createElement('div');
+  h.className = 'pdf-header';
+  h.innerHTML = `<h1>Simulador de Preços de Projetos BIM — SIPP BIM</h1>`;
+  conteudoPDF.appendChild(h);
+
+  // Dados do projeto
+  const dados = document.createElement('div'); dados.className = 'pdf-section';
+  dados.innerHTML = `
+    <h2>Dados do Projeto</h2>
+    <p><strong>Tipo de Projeto:</strong> ${tipoProjetoEl?.selectedOptions?.[0]?.text || tipoProjetoEl?.value || '-'}</p>
+    <p><strong>Área:</strong> ${areaEl?.value || '-'} m²</p>
+    <p><strong>Complexidade:</strong> ${complexEl?.value || '-'}</p>
+    <p><strong>LOD:</strong> ${lodEl?.value || '-'}</p>
+    <p><strong>Base de Cálculo:</strong> ${baseCalcEl?.selectedOptions?.[0]?.text || baseCalcEl?.value || '-'}</p>
+    <p><strong>Tipo de Cálculo:</strong> ${
+      modeloSelecionado==='m2' ? 'Por metro quadrado' :
+      modeloSelecionado==='hora' ? 'Por hora técnica' :
+      modeloSelecionado==='hora-perfil' ? 'Por Hora Técnica dos Profissionais Envolvidos' :
+      'Por escopo'
+    }</p>
+    <p><strong>Localidade:</strong> ${localidadeEl?.value || 'Não informado'}</p>
+  `;
+  conteudoPDF.appendChild(dados);
+
+  // Resultados (usa o conteúdo já renderizado no Resumo)
+  const resultados = document.createElement('div'); resultados.className='pdf-section';
+  const faixa = resumo.querySelector('[data-id="faixa"], .faixa, .range');
+  const sugerido = resumo.querySelector('[data-id="sugerido"], .sugerido, .suggested');
+  resultados.innerHTML = `
+    <h2>Resultados da Simulação</h2>
+    <div class="pdf-resultado">
+      <p><strong>Faixa Estimada:</strong> ${faixa?.textContent?.trim() || '-'}</p>
+      <p><strong>Valor Sugerido:</strong> ${sugerido?.textContent?.trim() || '-'}</p>
+    </div>
+  `;
+  conteudoPDF.appendChild(resultados);
+
+  // Explicação detalhada (se houver algum container no V9)
+  const explicacaoDom = document.querySelector('#explicacao, .explicacao, .explain, .detalhe');
+  if (explicacaoDom) {
+    const exp = document.createElement('div'); exp.className='pdf-section';
+    exp.innerHTML = `<h2>Explicação Detalhada do Cálculo</h2>${explicacaoDom.innerHTML}`;
+    conteudoPDF.appendChild(exp);
+  }
+
+  // Rodapé
+  const f = document.createElement('div'); f.className='pdf-footer';
+  const dataHora = new Date().toLocaleString('pt-BR');
+  f.innerHTML = `
+    <p>Relatório gerado em: ${dataHora}</p>
+    <p>© SIPP BIM - Simulador de Precificação de Projetos BIM</p>
+    <p>Desenvolvido por: RBIM CONSULTORIA — Direitos Reservados</p>
+  `;
+  conteudoPDF.appendChild(f);
+
+  // 4) Gerar HTML e imprimir (usa janela de impressão para “Salvar como PDF”)
+  const htmlContent = conteudoPDF.outerHTML;
+  const blob = new Blob([`
+    <!doctype html><html><head><meta charset="utf-8">
+      <title>Simulação de Custos BIM</title>
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+    </head><body>${htmlContent}</body></html>
+  `], { type: 'text/html' });
+
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  w.onload = () => { w.print(); URL.revokeObjectURL(url); };
+}
+/* === FIM EXPORTAÇÃO PARA PDF (V9) === */
 
     $('#btnSimular').addEventListener('click', recalculate);
-    $('#btnExportar').addEventListener('click', ()=>{ alert('Aqui você pode chamar sua exportação para PDF/Planilha.'); });
+    $('#btnExportar').addEventListener('click', exportarParaPDF); });
 
     // init
     (function init(){
