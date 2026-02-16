@@ -780,15 +780,21 @@ if(explainCard){
   </script>
   <!-- FIM AUTH GUARD -->
 <script>
-  // Usa o MESMO supabase já criado no Auth Guard
   const btn = document.getElementById("logoutBtn");
+
   if (btn) {
     btn.addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.replace("login.html");
+      try {
+        await sb.auth.signOut();              // <<< AQUI: sb (não supabase)
+        window.location.replace("login.html"); // redireciona e evita “voltar”
+      } catch (e) {
+        console.error("Logout falhou:", e);
+        alert("Não consegui sair. Veja o console (F12).");
+      }
     });
   }
 </script>
+
 
 </body>
 </html>
