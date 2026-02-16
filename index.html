@@ -770,7 +770,18 @@ if(explainCard){
         await sb.auth.signOut();
         window.location.replace('pendente.html');
         return;
-      }
+        // Registrar acesso
+const { data: { user } } = await sb.auth.getUser();
+
+if (user) {
+  await sb.from('access_logs').insert([
+    {
+      user_id: user.id,
+      email: user.email,
+      page: 'index'
+    }
+  ]);
+}
       document.documentElement.style.visibility = 'visible';
 // 🔓 Logout usando o mesmo client
 const logoutBtn = document.getElementById("logoutBtn");
