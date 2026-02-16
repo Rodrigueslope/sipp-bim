@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — SIPP BIM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a1f2e;
+      --bg-input: #0f1320;
+      --border: rgba(255,255,255,0.06);
+      --border-focus: #3b82f6;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59,130,246,0.25);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --error-bg: rgba(239,68,68,0.1);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated background */
+    .bg-animation {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s ease-in-out infinite;
+    }
+    .bg-animation .orb:nth-child(1) {
+      width: 600px; height: 600px;
+      background: #3b82f6;
+      top: -200px; left: -100px;
+      animation-delay: 0s;
+    }
+    .bg-animation .orb:nth-child(2) {
+      width: 500px; height: 500px;
+      background: #8b5cf6;
+      bottom: -150px; right: -100px;
+      animation-delay: -7s;
+    }
+    .bg-animation .orb:nth-child(3) {
+      width: 400px; height: 400px;
+      background: #06b6d4;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -14s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -40px) scale(1.05); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(40px, 30px) scale(1.02); }
+    }
+
+    /* Login container */
+    .login-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      backdrop-filter: blur(20px);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 80px rgba(59,130,246,0.05);
+      animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    @keyframes cardAppear {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo */
+    .logo-container {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-container img {
+      max-width: 200px;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+    .logo-container img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 12px 40px rgba(59,130,246,0.2);
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    .login-subtitle {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+      pointer-events: none;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+    .form-group input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: rgba(15,19,32,0.8);
+    }
+    .form-group input:focus + svg,
+    .form-group input:focus ~ svg {
+      color: var(--accent);
+    }
+
+    /* Password toggle */
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .toggle-password:hover { color: var(--text-secondary); }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 8px;
+      letter-spacing: 0.3px;
+    }
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59,130,246,0.4);
+    }
+    .btn-login:hover::before { opacity: 1; }
+    .btn-login:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+    }
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error message */
+    .error-msg {
+      background: var(--error-bg);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #fca5a5;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: shake 0.4s ease;
+    }
+    .error-msg.show { display: flex; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    /* Links */
+    .auth-links {
+      text-align: center;
+    }
+    .auth-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+    .auth-links a:hover {
+      color: #60a5fa;
+      text-shadow: 0 0 12px rgba(59,130,246,0.3);
+    }
+    .auth-links p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 12px;
+    }
+
+    /* Footer */
+    .footer-text {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 36px 24px;
+        border-radius: 20px;
+      }
+      .logo-container img {
+        max-width: 160px;
+      }
+      .login-title { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated background orbs -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="sipp.png" alt="SIPP BIM">
+      </div>
+
+      <h1 class="login-title">Bem-vindo de volta</h1>
+      <p class="login-subtitle">Acesse o Simulador de Preços de Projetos BIM</p>
+
+      <!-- Error message -->
+      <div class="error-msg" id="errorMsg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <span id="errorText">Erro ao fazer login.</span>
+      </div>
+
+      <!-- Form -->
+      <form id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <div class="input-wrapper">
+            <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <button type="button" class="toggle-password" id="togglePassword" tabindex="-1" aria-label="Mostrar senha">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnLogin">
+          Entrar
+        </button>
+      </form>
+
+      <div class="divider"><span>ou</span></div>
+
+      <div class="auth-links">
+        <a href="signup.html">Criar uma conta gratuita</a>
+        <p>Ainda não tem acesso? <a href="signup.html">Cadastre-se</a></p>
+      </div>
+
+      <p class="footer-text">SIPP BIM &copy; 2025 — RBIM Consultoria. Todos os direitos reservados.</p>
+    </div>
+  </div>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    // ─── Supabase Config ───
+    const SUPABASE_URL = 'https://extggehxevmwknixuhpn.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_0F-m0AEgpGOlWHPCGYJuiQ_XWf7Hdm9';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ─── DOM Elements ───
+    const form        = document.getElementById('loginForm');
+    const btnLogin    = document.getElementById('btnLogin');
+    const errorMsg    = document.getElementById('errorMsg');
+    const errorText   = document.getElementById('errorText');
+    const emailInput  = document.getElementById('email');
+    const passInput   = document.getElementById('password');
+    const toggleBtn   = document.getElementById('togglePassword');
+
+    // ─── Toggle password visibility ───
+    let passVisible = false;
+    toggleBtn.addEventListener('click', () => {
+      passVisible = !passVisible;
+      passInput.type = passVisible ? 'text' : 'password';
+      toggleBtn.innerHTML = passVisible
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    });
+
+    // ─── Show error ───
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMsg.classList.add('show');
+    }
+    function hideError() {
+      errorMsg.classList.remove('show');
+    }
+
+    // ─── Set loading state ───
+    function setLoading(loading) {
+      btnLogin.disabled = loading;
+      btnLogin.innerHTML = loading
+        ? '<span class="spinner"></span> Verificando...'
+        : 'Entrar';
+    }
+
+    // ─── Login handler ───
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = emailInput.value.trim();
+      const password = passInput.value;
+
+      if (!email || !password) {
+        showError('Preencha todos os campos.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        // 1) Autenticar com Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (authError) {
+          if (authError.message.includes('Invalid login')) {
+            showError('E-mail ou senha incorretos.');
+          } else if (authError.message.includes('Email not confirmed')) {
+            showError('Confirme seu e-mail antes de fazer login.');
+          } else {
+            showError(authError.message);
+          }
+          setLoading(false);
+          return;
+        }
+
+        const userId = authData.user.id;
+
+        // 2) Verificar status na tabela profiles
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('status')
+          .eq('id', userId)
+          .single();
+
+        if (profileError) {
+          // Se não encontrou perfil, tratar como pendente
+          console.warn('Perfil não encontrado, redirecionando para pagamento pendente.');
+          window.location.href = 'pendente.html';
+          return;
+        }
+
+        // 3) Verificar se status é 'ativo'
+        if (profile.status !== 'ativo') {
+          // Fazer logout para não manter sessão ativa
+          await supabase.auth.signOut();
+          window.location.href = 'pendente.html';
+          return;
+        }
+
+        // 4) Status ativo → redirecionar para o simulador
+        window.location.href = 'index.html';
+
+      } catch (err) {
+        console.error('Erro inesperado:', err);
+        showError('Erro de conexão. Tente novamente.');
+        setLoading(false);
+      }
+    });
+
+    // ─── Check if already logged in ───
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // Verificar status
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('status')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profile && profile.status === 'ativo') {
+          window.location.href = 'index.html';
+        } else if (profile && profile.status !== 'ativo') {
+          await supabase.auth.signOut();
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
