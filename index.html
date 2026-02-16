@@ -772,6 +772,15 @@ if(explainCard){
         return;
       }
       document.documentElement.style.visibility = 'visible';
+// 🔓 Logout usando o mesmo client
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await sb.auth.signOut();
+    window.location.replace("login.html");
+  });
+}
+
     } catch (err) {
       console.error('Auth guard error:', err);
       window.location.replace('login.html');
@@ -779,22 +788,6 @@ if(explainCard){
   })();
   </script>
   <!-- FIM AUTH GUARD -->
-<script>
-  const btn = document.getElementById("logoutBtn");
-
-  if (btn) {
-    btn.addEventListener("click", async () => {
-      try {
-        await sb.auth.signOut();              // <<< AQUI: sb (não supabase)
-        window.location.replace("login.html"); // redireciona e evita “voltar”
-      } catch (e) {
-        console.error("Logout falhou:", e);
-        alert("Não consegui sair. Veja o console (F12).");
-      }
-    });
-  }
-</script>
-
 
 </body>
 </html>
