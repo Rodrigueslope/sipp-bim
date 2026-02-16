@@ -78,6 +78,21 @@
       <div class="brand">
         <img class="logo" src="sipp.png" alt="RBIM" />
       </div>
+      <button id="logoutBtn" style="
+  position:absolute;
+  top:30px;
+  right:40px;
+  background:#0FB268;
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.2);
+">
+  Sair
+</button>
       <h1>Simulador de Preços de Projetos e Serviços BIM — SIPP BIM</h1>
       <div class="sub">Preencha, clique em “Simular Custo” e veja o detalhamento com transparência.</div>
     </header>
@@ -764,6 +779,16 @@ if(explainCard){
   })();
   </script>
   <!-- FIM AUTH GUARD -->
+<script>
+  // Usa o MESMO supabase já criado no Auth Guard
+  const btn = document.getElementById("logoutBtn");
+  if (btn) {
+    btn.addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.replace("login.html");
+    });
+  }
+</script>
 
 </body>
 </html>
