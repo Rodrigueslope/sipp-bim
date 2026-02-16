@@ -155,7 +155,7 @@
     .input-wrapper {
       position: relative;
     }
-    .input-wrapper svg {
+    .input-wrapper svg.icon-left {
       position: absolute;
       left: 14px;
       top: 50%;
@@ -186,9 +186,10 @@
       box-shadow: 0 0 0 3px var(--accent-glow);
       background: rgba(15,19,32,0.8);
     }
-    .form-group input:focus + svg,
-    .form-group input:focus ~ svg {
-      color: var(--accent);
+    /* Input error state */
+    .form-group input.input-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
     }
 
     /* Password toggle */
@@ -274,9 +275,11 @@
       display: none;
       align-items: center;
       gap: 10px;
+    }
+    .error-msg.show {
+      display: flex;
       animation: shake 0.4s ease;
     }
-    .error-msg.show { display: flex; }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-6px); }
@@ -378,12 +381,12 @@
       </div>
 
       <!-- Form -->
-      <form id="loginForm" autocomplete="on">
+      <form id="loginForm" autocomplete="on" novalidate>
         <div class="form-group">
           <label for="email">E-mail</label>
           <div class="input-wrapper">
             <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
             </svg>
           </div>
@@ -392,8 +395,8 @@
         <div class="form-group">
           <label for="password">Senha</label>
           <div class="input-wrapper">
-            <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <input type="password" id="password" name="password" placeholder="Sua senha" required autocomplete="current-password">
+            <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
             <button type="button" class="toggle-password" id="togglePassword" tabindex="-1" aria-label="Mostrar senha">
@@ -424,12 +427,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <script>
-    // ─── Supabase Config ───
+    // ═══════════════════════════════════════════════════
+    // SUPABASE CONFIG
+    // ═══════════════════════════════════════════════════
     const SUPABASE_URL = 'https://extggehxevmwknixuhpn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_0F-m0AEgpGOlWHPCGYJuiQ_XWf7Hdm9';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ─── DOM Elements ───
+    // ═══════════════════════════════════════════════════
+    // DOM ELEMENTS
+    // ═══════════════════════════════════════════════════
     const form        = document.getElementById('loginForm');
     const btnLogin    = document.getElementById('btnLogin');
     const errorMsg    = document.getElementById('errorMsg');
@@ -438,26 +445,44 @@
     const passInput   = document.getElementById('password');
     const toggleBtn   = document.getElementById('togglePassword');
 
-    // ─── Toggle password visibility ───
+    // ═══════════════════════════════════════════════════
+    // TOGGLE PASSWORD VISIBILITY
+    // ═══════════════════════════════════════════════════
     let passVisible = false;
     toggleBtn.addEventListener('click', () => {
       passVisible = !passVisible;
       passInput.type = passVisible ? 'text' : 'password';
       toggleBtn.innerHTML = passVisible
-        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
-        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     });
 
-    // ─── Show error ───
-    function showError(msg) {
+    // ═══════════════════════════════════════════════════
+    // CLEAR ERRORS ON INPUT
+    // ═══════════════════════════════════════════════════
+    [emailInput, passInput].forEach(el => {
+      el.addEventListener('input', () => {
+        el.classList.remove('input-error');
+        hideError();
+      });
+    });
+
+    // ═══════════════════════════════════════════════════
+    // ERROR HELPERS
+    // ═══════════════════════════════════════════════════
+    function showError(msg, field) {
       errorText.textContent = msg;
       errorMsg.classList.add('show');
+      if (field) {
+        field.classList.add('input-error');
+        field.focus();
+      }
     }
+
     function hideError() {
       errorMsg.classList.remove('show');
     }
 
-    // ─── Set loading state ───
     function setLoading(loading) {
       btnLogin.disabled = loading;
       btnLogin.innerHTML = loading
@@ -465,43 +490,78 @@
         : 'Entrar';
     }
 
-    // ─── Login handler ───
+    // ═══════════════════════════════════════════════════
+    // LOGIN HANDLER — PRINCIPAL
+    // ═══════════════════════════════════════════════════
     form.addEventListener('submit', async (e) => {
+      // IMPEDIR recarregamento da página
       e.preventDefault();
+      e.stopPropagation();
       hideError();
 
       const email = emailInput.value.trim();
       const password = passInput.value;
 
-      if (!email || !password) {
-        showError('Preencha todos os campos.');
+      // ─── Validações detalhadas ───
+      if (!email) {
+        showError('Informe seu e-mail.', emailInput);
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showError('Formato de e-mail inválido.', emailInput);
+        return;
+      }
+      if (!password) {
+        showError('Informe sua senha.', passInput);
+        return;
+      }
+      if (password.length < 6) {
+        showError('Senha muito curta. A senha deve ter no mínimo 6 caracteres.', passInput);
         return;
       }
 
       setLoading(true);
 
       try {
-        // 1) Autenticar com Supabase Auth
+        // ═══════════════════════════════════════════════
+        // PASSO 1: Autenticar com Supabase Auth
+        // ═══════════════════════════════════════════════
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email,
-          password
+          email: email,
+          password: password
         });
 
         if (authError) {
-          if (authError.message.includes('Invalid login')) {
-            showError('E-mail ou senha incorretos.');
-          } else if (authError.message.includes('Email not confirmed')) {
-            showError('Confirme seu e-mail antes de fazer login.');
-          } else {
-            showError(authError.message);
-          }
           setLoading(false);
+          const msg = authError.message.toLowerCase();
+
+          if (msg.includes('invalid login') || msg.includes('invalid credentials')) {
+            showError('E-mail ou senha incorretos. Verifique seus dados e tente novamente.');
+          } else if (msg.includes('email not confirmed')) {
+            showError('Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.');
+          } else if (msg.includes('too many') || msg.includes('rate limit')) {
+            showError('Muitas tentativas de login. Aguarde alguns minutos e tente novamente.');
+          } else if (msg.includes('user not found')) {
+            showError('Nenhuma conta encontrada com este e-mail. Cadastre-se primeiro.', emailInput);
+          } else {
+            showError('Erro ao fazer login: ' + authError.message);
+          }
+          return;
+        }
+
+        if (!authData || !authData.user) {
+          setLoading(false);
+          showError('Erro inesperado na autenticação. Tente novamente.');
           return;
         }
 
         const userId = authData.user.id;
+        console.log('Autenticado com sucesso. User ID:', userId);
 
-        // 2) Verificar status na tabela profiles
+        // ═══════════════════════════════════════════════
+        // PASSO 2: Verificar status na tabela profiles
+        // ═══════════════════════════════════════════════
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('status')
@@ -509,46 +569,60 @@
           .single();
 
         if (profileError) {
-          // Se não encontrou perfil, tratar como pendente
-          console.warn('Perfil não encontrado, redirecionando para pagamento pendente.');
-          window.location.href = 'pendente.html';
-          return;
-        }
-
-        // 3) Verificar se status é 'ativo'
-        if (profile.status !== 'ativo') {
-          // Fazer logout para não manter sessão ativa
+          console.error('Erro ao buscar profile:', profileError);
+          // Perfil não encontrado — tratar como bloqueado
           await supabase.auth.signOut();
-          window.location.href = 'pendente.html';
+          window.location.replace('pendente.html');
           return;
         }
 
-        // 4) Status ativo → redirecionar para o simulador
-        window.location.href = 'index.html';
+        console.log('Status do perfil:', profile.status);
+
+        // ═══════════════════════════════════════════════
+        // PASSO 3: Decisão baseada no status
+        // ═══════════════════════════════════════════════
+        if (profile.status === 'ativo') {
+          // Status ATIVO → liberar acesso ao simulador
+          console.log('Status ativo — redirecionando para index.html');
+          window.location.replace('index.html');
+        } else {
+          // Status BLOQUEADO, PENDENTE ou qualquer outro → bloquear
+          console.log('Status não ativo (' + profile.status + ') — redirecionando para pendente.html');
+          await supabase.auth.signOut();
+          window.location.replace('pendente.html');
+        }
 
       } catch (err) {
-        console.error('Erro inesperado:', err);
-        showError('Erro de conexão. Tente novamente.');
+        console.error('Erro inesperado no login:', err);
+        showError('Erro de conexão com o servidor. Verifique sua internet e tente novamente.');
         setLoading(false);
       }
     });
 
-    // ─── Check if already logged in ───
+    // ═══════════════════════════════════════════════════
+    // CHECK IF ALREADY LOGGED IN (auto-redirect)
+    // ═══════════════════════════════════════════════════
     (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        // Verificar status
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('status')
-          .eq('id', session.user.id)
-          .single();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          // Verificar status do perfil
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('status')
+            .eq('id', session.user.id)
+            .single();
 
-        if (profile && profile.status === 'ativo') {
-          window.location.href = 'index.html';
-        } else if (profile && profile.status !== 'ativo') {
-          await supabase.auth.signOut();
+          if (profile && profile.status === 'ativo') {
+            // Já logado e ativo → ir direto para o simulador
+            window.location.replace('index.html');
+          } else {
+            // Logado mas não ativo → fazer logout
+            await supabase.auth.signOut();
+          }
         }
+      } catch (err) {
+        console.warn('Erro ao verificar sessão existente:', err);
       }
     })();
   </script>
