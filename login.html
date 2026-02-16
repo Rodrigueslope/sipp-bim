@@ -416,7 +416,6 @@
 
       <div class="auth-links">
         <a href="signup.html">Criar uma conta gratuita</a>
-        <p>Ainda não tem acesso? <a href="signup.html">Cadastre-se</a></p>
       </div>
 
       <p class="footer-text">SIPP BIM &copy; 2025 — RBIM Consultoria. Todos os direitos reservados.</p>
@@ -640,8 +639,6 @@
             showError('E-mail ou senha incorretos. Verifique seus dados e tente novamente.');
           } else if (msg.includes('email not confirmed')) {
             showError('Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.');
-          } else if (msg.includes('too many') || msg.includes('rate limit')) {
-            showError('Muitas tentativas de login. Aguarde alguns minutos e tente novamente.');
           } else if (msg.includes('user not found')) {
             showError('Nenhuma conta encontrada com este e-mail. Cadastre-se primeiro.', emailInput);
           } else {

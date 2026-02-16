@@ -592,7 +592,6 @@
 
       <div class="auth-links">
         <a href="login.html">Já tenho uma conta</a>
-        <p>Já possui cadastro? <a href="login.html">Faça login</a></p>
       </div>
 
       <p class="footer-text">SIPP BIM &copy; 2025 — RBIM Consultoria. Todos os direitos reservados.</p>
@@ -842,9 +841,6 @@
           } else if (errLower.includes('password') || errLower.includes('short') || errLower.includes('weak')) {
             alert('Senha muito curta ou fraca. Use no mínimo 6 caracteres.');
             showError('Senha muito curta.');
-          } else if (errLower.includes('rate') || errLower.includes('limit')) {
-            alert('Muitas tentativas. Aguarde alguns minutos.');
-            showError('Muitas tentativas. Aguarde.');
           } else {
             alert('Erro ao criar conta: ' + errMsg);
             showError('Erro: ' + errMsg);
