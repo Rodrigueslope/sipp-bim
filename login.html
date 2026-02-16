@@ -432,7 +432,8 @@
     // ═══════════════════════════════════════════════════
     const SUPABASE_URL = 'https://extggehxevmwknixuhpn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_0F-m0AEgpGOlWHPCGYJuiQ_XWf7Hdm9';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('[SIPP-LOGIN] ✅ Supabase client criado.');
 
     // ═══════════════════════════════════════════════════
     // DOM ELEMENTS
@@ -491,6 +492,100 @@
     }
 
     // ═══════════════════════════════════════════════════
+    // HELPER: Buscar ou criar profile
+    // Se o profile não existir, cria com status 'ativo'
+    // ═══════════════════════════════════════════════════
+    async function getOrCreateProfile(userId, userEmail, accessToken) {
+      console.log('[SIPP-LOGIN] Buscando profile para user:', userId);
+
+      // Tentativa 1: buscar via SDK
+      const { data: profile, error: profileError } = await _sb
+        .from('profiles')
+        .select('status')
+        .eq('id', userId)
+        .single();
+
+      if (profile && profile.status) {
+        console.log('[SIPP-LOGIN] ✅ Profile encontrado. Status:', profile.status);
+        return { status: profile.status, found: true };
+      }
+
+      console.warn('[SIPP-LOGIN] ⚠️ Profile NÃO encontrado via SDK.', profileError ? profileError.message : '');
+      console.log('[SIPP-LOGIN] Tentando buscar via REST API...');
+
+      // Tentativa 2: buscar via REST API
+      try {
+        var restGet = await fetch(
+          SUPABASE_URL + '/rest/v1/profiles?id=eq.' + userId + '&select=status',
+          {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': 'Bearer ' + (accessToken || SUPABASE_KEY)
+            }
+          }
+        );
+        var restData = await restGet.json();
+        console.log('[SIPP-LOGIN] REST GET profiles:', JSON.stringify(restData));
+
+        if (restData && restData.length > 0 && restData[0].status) {
+          console.log('[SIPP-LOGIN] ✅ Profile encontrado via REST. Status:', restData[0].status);
+          return { status: restData[0].status, found: true };
+        }
+      } catch (e) {
+        console.error('[SIPP-LOGIN] ❌ REST GET falhou:', e.message);
+      }
+
+      // Profile não existe — tentar criar com status 'ativo'
+      console.log('[SIPP-LOGIN] 🔄 Profile não existe. Criando automaticamente...');
+
+      // Tentativa de criação via SDK
+      var insertResult = await _sb
+        .from('profiles')
+        .upsert({ id: userId, email: userEmail, status: 'ativo' }, { onConflict: 'id' });
+
+      console.log('[SIPP-LOGIN] SDK upsert result:', insertResult.error ? insertResult.error.message : 'OK');
+
+      if (!insertResult.error) {
+        console.log('[SIPP-LOGIN] ✅ Profile criado via SDK com status ativo.');
+        return { status: 'ativo', found: true };
+      }
+
+      // Tentativa de criação via REST API
+      console.log('[SIPP-LOGIN] 🔄 Tentando criar via REST API...');
+      try {
+        var restPost = await fetch(SUPABASE_URL + '/rest/v1/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + (accessToken || SUPABASE_KEY),
+            'Prefer': 'resolution=merge-duplicates,return=representation'
+          },
+          body: JSON.stringify({ id: userId, email: userEmail, status: 'ativo' })
+        });
+        var restPostBody = await restPost.text();
+        console.log('[SIPP-LOGIN] REST POST status:', restPost.status, 'body:', restPostBody);
+
+        if (restPost.ok) {
+          console.log('[SIPP-LOGIN] ✅ Profile criado via REST API.');
+          return { status: 'ativo', found: true };
+        }
+      } catch (e) {
+        console.error('[SIPP-LOGIN] ❌ REST POST falhou:', e.message);
+      }
+
+      console.error('[SIPP-LOGIN] ❌ NÃO foi possível encontrar ou criar o profile.');
+      console.error('[SIPP-LOGIN] ═══════════════════════════════════════════════');
+      console.error('[SIPP-LOGIN] DIAGNÓSTICO:');
+      console.error('[SIPP-LOGIN] A tabela profiles pode ter RLS habilitada sem policies adequadas.');
+      console.error('[SIPP-LOGIN] Vá ao Supabase Dashboard > Table Editor > profiles > RLS');
+      console.error('[SIPP-LOGIN] Adicione policies para SELECT e INSERT para authenticated users.');
+      console.error('[SIPP-LOGIN] OU desabilite RLS temporariamente.');
+      console.error('[SIPP-LOGIN] ═══════════════════════════════════════════════');
+      return { status: null, found: false };
+    }
+
+    // ═══════════════════════════════════════════════════
     // LOGIN HANDLER — PRINCIPAL
     // ═══════════════════════════════════════════════════
     form.addEventListener('submit', async (e) => {
@@ -522,12 +617,16 @@
       }
 
       setLoading(true);
+      console.log('[SIPP-LOGIN] ══════════════════════════════════════');
+      console.log('[SIPP-LOGIN] Iniciando login para:', email);
+      console.log('[SIPP-LOGIN] ══════════════════════════════════════');
 
       try {
         // ═══════════════════════════════════════════════
         // PASSO 1: Autenticar com Supabase Auth
         // ═══════════════════════════════════════════════
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        console.log('[SIPP-LOGIN] PASSO 1: signInWithPassword...');
+        const { data: authData, error: authError } = await _sb.auth.signInWithPassword({
           email: email,
           password: password
         });
@@ -535,6 +634,7 @@
         if (authError) {
           setLoading(false);
           const msg = authError.message.toLowerCase();
+          console.error('[SIPP-LOGIN] ❌ Auth error:', authError.message);
 
           if (msg.includes('invalid login') || msg.includes('invalid credentials')) {
             showError('E-mail ou senha incorretos. Verifique seus dados e tente novamente.');
@@ -552,48 +652,50 @@
 
         if (!authData || !authData.user) {
           setLoading(false);
+          console.error('[SIPP-LOGIN] ❌ Auth retornou sem user.');
           showError('Erro inesperado na autenticação. Tente novamente.');
           return;
         }
 
         const userId = authData.user.id;
-        console.log('Autenticado com sucesso. User ID:', userId);
+        const userEmail = authData.user.email;
+        const accessToken = authData.session ? authData.session.access_token : null;
+        console.log('[SIPP-LOGIN] ✅ Autenticado. User ID:', userId);
+        console.log('[SIPP-LOGIN] Access token:', accessToken ? 'presente' : 'ausente');
 
         // ═══════════════════════════════════════════════
-        // PASSO 2: Verificar status na tabela profiles
+        // PASSO 2: Verificar/criar profile na tabela profiles
+        // Aguarda confirmação ANTES de redirecionar
         // ═══════════════════════════════════════════════
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('status')
-          .eq('id', userId)
-          .single();
+        console.log('[SIPP-LOGIN] PASSO 2: Verificando profile...');
+        const profileResult = await getOrCreateProfile(userId, userEmail, accessToken);
 
-        if (profileError) {
-          console.error('Erro ao buscar profile:', profileError);
-          // Perfil não encontrado — tratar como bloqueado
-          await supabase.auth.signOut();
-          window.location.replace('pendente.html');
+        if (!profileResult.found) {
+          setLoading(false);
+          console.error('[SIPP-LOGIN] ❌ Profile não encontrado e não pôde ser criado.');
+          showError('Erro ao verificar seu perfil. Verifique com o administrador.');
+          // NÃO redirecionar — manter na tela de login com erro
           return;
         }
 
-        console.log('Status do perfil:', profile.status);
+        console.log('[SIPP-LOGIN] Profile confirmado. Status:', profileResult.status);
 
         // ═══════════════════════════════════════════════
         // PASSO 3: Decisão baseada no status
+        // Usa window.location.replace para evitar botão voltar
         // ═══════════════════════════════════════════════
-        if (profile.status === 'ativo') {
-          // Status ATIVO → liberar acesso ao simulador
-          console.log('Status ativo — redirecionando para index.html');
+        if (profileResult.status === 'ativo') {
+          console.log('[SIPP-LOGIN] ✅ Status ATIVO — redirecionando para index.html');
           window.location.replace('index.html');
         } else {
-          // Status BLOQUEADO, PENDENTE ou qualquer outro → bloquear
-          console.log('Status não ativo (' + profile.status + ') — redirecionando para pendente.html');
-          await supabase.auth.signOut();
+          console.log('[SIPP-LOGIN] ⛔ Status:', profileResult.status, '— redirecionando para pendente.html');
+          await _sb.auth.signOut();
           window.location.replace('pendente.html');
         }
 
       } catch (err) {
-        console.error('Erro inesperado no login:', err);
+        console.error('[SIPP-LOGIN] ❌ Erro inesperado no login:', err);
+        console.error('[SIPP-LOGIN] Stack:', err.stack || 'N/A');
         showError('Erro de conexão com o servidor. Verifique sua internet e tente novamente.');
         setLoading(false);
       }
@@ -604,25 +706,24 @@
     // ═══════════════════════════════════════════════════
     (async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await _sb.auth.getSession();
         if (session) {
-          // Verificar status do perfil
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('status')
-            .eq('id', session.user.id)
-            .single();
+          console.log('[SIPP-LOGIN] Sessão existente detectada. Verificando profile...');
+          const accessToken = session.access_token;
+          const profileResult = await getOrCreateProfile(session.user.id, session.user.email, accessToken);
 
-          if (profile && profile.status === 'ativo') {
-            // Já logado e ativo → ir direto para o simulador
+          if (profileResult.found && profileResult.status === 'ativo') {
+            console.log('[SIPP-LOGIN] ✅ Sessão ativa com status ativo. Redirecionando...');
             window.location.replace('index.html');
           } else {
-            // Logado mas não ativo → fazer logout
-            await supabase.auth.signOut();
+            console.log('[SIPP-LOGIN] Sessão ativa mas status não é ativo. Fazendo logout...');
+            await _sb.auth.signOut();
           }
+        } else {
+          console.log('[SIPP-LOGIN] Nenhuma sessão existente.');
         }
       } catch (err) {
-        console.warn('Erro ao verificar sessão existente:', err);
+        console.warn('[SIPP-LOGIN] Erro ao verificar sessão existente:', err);
       }
     })();
   </script>

@@ -632,9 +632,10 @@
 
     try {
       _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      console.log('[SIPP] Supabase client criado com sucesso.');
+      console.log('[SIPP] ✅ Supabase client criado com sucesso.');
+      console.log('[SIPP] URL:', SUPABASE_URL);
     } catch (err) {
-      console.error('[SIPP] FALHA ao criar Supabase client:', err);
+      console.error('[SIPP] ❌ FALHA ao criar Supabase client:', err);
       alert('Erro crítico: não foi possível conectar ao Supabase. Recarregue a página.');
     }
 
@@ -705,11 +706,48 @@
     }
 
     // ═══════════════════════════════════════════════════════════
+    // FALLBACK: Insert via REST API direta (bypassa problemas do SDK)
+    // ═══════════════════════════════════════════════════════════
+    async function insertProfileViaREST(accessToken, userId, userEmail) {
+      console.log('[SIPP] 🔄 Tentando insert via REST API direta...');
+      var payload = { id: userId, email: userEmail, status: 'ativo' };
+      console.log('[SIPP] REST payload:', JSON.stringify(payload));
+
+      var response = await fetch(SUPABASE_URL + '/rest/v1/profiles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + (accessToken || SUPABASE_KEY),
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      var responseText = await response.text();
+      console.log('[SIPP] REST response status:', response.status);
+      console.log('[SIPP] REST response body:', responseText);
+
+      if (!response.ok) {
+        console.error('[SIPP] ❌ REST INSERT falhou. Status:', response.status);
+        console.error('[SIPP] ❌ REST error details:', responseText);
+        console.error('[SIPP] ⚠️ POSSÍVEL CAUSA: RLS (Row Level Security) está bloqueando o INSERT.');
+        console.error('[SIPP] ⚠️ SOLUÇÃO: No Supabase Dashboard, vá em Table Editor > profiles > RLS e adicione uma policy que permita INSERT para authenticated users, OU desabilite RLS temporariamente.');
+        return { ok: false, status: response.status, body: responseText };
+      }
+
+      console.log('[SIPP] ✅ REST INSERT bem-sucedido!');
+      return { ok: true, status: response.status, body: responseText };
+    }
+
+    // ═══════════════════════════════════════════════════════════
     // HANDLER PRINCIPAL — chamado via onclick do botão
     // Não depende de form submit, não recarrega a página NUNCA
     // ═══════════════════════════════════════════════════════════
     async function handleSignup() {
-      console.log('[SIPP] handleSignup() chamado');
+      console.log('[SIPP] ════════════════════════════════════');
+      console.log('[SIPP] handleSignup() INICIADO');
+      console.log('[SIPP] ════════════════════════════════════');
       hideError();
 
       // Ler valores dos campos
@@ -766,12 +804,13 @@
       }
 
       setLoading(true);
-      console.log('[SIPP] Iniciando signUp para:', email);
 
       try {
         // ═══════════════════════════════════════════════
         // PASSO 1: supabase.auth.signUp
         // ═══════════════════════════════════════════════
+        console.log('[SIPP] PASSO 1: Executando signUp para:', email);
+
         var result = await _supabase.auth.signUp({
           email: email,
           password: password,
@@ -784,12 +823,18 @@
           }
         });
 
-        console.log('[SIPP] signUp result:', JSON.stringify(result));
+        console.log('[SIPP] signUp completo.');
+        console.log('[SIPP] signUp error:', result.error ? result.error.message : 'nenhum');
+        console.log('[SIPP] signUp user:', result.data && result.data.user ? result.data.user.id : 'nenhum');
+        console.log('[SIPP] signUp session:', result.data && result.data.session ? 'SIM (token presente)' : 'NÃO (sem sessão)');
 
         if (result.error) {
           setLoading(false);
           var errMsg = result.error.message || 'Erro desconhecido';
           var errLower = errMsg.toLowerCase();
+
+          console.error('[SIPP] ❌ signUp error:', errMsg);
+          console.error('[SIPP] ❌ signUp error code:', result.error.status || 'N/A');
 
           if (errLower.includes('already') || errLower.includes('registered')) {
             alert('Este e-mail já está cadastrado. Faça login na sua conta existente.');
@@ -810,6 +855,7 @@
         // Verificar se user foi criado
         if (!result.data || !result.data.user) {
           setLoading(false);
+          console.error('[SIPP] ❌ signUp retornou sem user. Data:', JSON.stringify(result.data));
           alert('Erro inesperado: o usuário não foi criado. Tente novamente.');
           showError('Erro inesperado. Tente novamente.');
           return;
@@ -817,13 +863,21 @@
 
         var userId = result.data.user.id;
         var userEmail = result.data.user.email;
-        console.log('[SIPP] Usuário criado com ID:', userId);
+        var accessToken = result.data.session ? result.data.session.access_token : null;
+
+        console.log('[SIPP] ✅ Usuário criado com ID:', userId);
+        console.log('[SIPP] ✅ Email:', userEmail);
+        console.log('[SIPP] Access token disponível:', accessToken ? 'SIM' : 'NÃO');
 
         // ═══════════════════════════════════════════════
         // PASSO 2: Inserir na tabela profiles (status = 'ativo')
+        // Tentativa 1: Via SDK do Supabase
         // ═══════════════════════════════════════════════
-        console.log('[SIPP] Inserindo na tabela profiles...');
+        console.log('[SIPP] PASSO 2: Inserindo na tabela profiles...');
+        var profileInserted = false;
 
+        // Tentativa 1: insert via SDK
+        console.log('[SIPP] Tentativa 1: insert via SDK...');
         var profileResult = await _supabase
           .from('profiles')
           .insert({
@@ -832,11 +886,19 @@
             status: 'ativo'
           });
 
-        console.log('[SIPP] profiles insert result:', JSON.stringify(profileResult));
+        console.log('[SIPP] SDK insert status:', profileResult.status);
+        console.log('[SIPP] SDK insert error:', profileResult.error ? profileResult.error.message : 'nenhum');
+        console.log('[SIPP] SDK insert data:', JSON.stringify(profileResult.data));
 
         if (profileResult.error) {
-          console.error('[SIPP] Erro ao inserir profile:', profileResult.error.message);
-          // Tentar upsert como fallback
+          console.error('[SIPP] ❌ SDK INSERT falhou:', profileResult.error.message);
+          console.error('[SIPP] ❌ SDK error code:', profileResult.error.code);
+          console.error('[SIPP] ❌ SDK error details:', profileResult.error.details);
+          console.error('[SIPP] ❌ SDK error hint:', profileResult.error.hint);
+          console.error('[SIPP] ⚠️ Isso geralmente indica que RLS está habilitada e bloqueando o INSERT.');
+
+          // Tentativa 2: upsert via SDK
+          console.log('[SIPP] Tentativa 2: upsert via SDK...');
           var upsertResult = await _supabase
             .from('profiles')
             .upsert({
@@ -845,20 +907,73 @@
               status: 'ativo'
             }, { onConflict: 'id' });
 
-          console.log('[SIPP] profiles upsert fallback:', JSON.stringify(upsertResult));
+          console.log('[SIPP] SDK upsert status:', upsertResult.status);
+          console.log('[SIPP] SDK upsert error:', upsertResult.error ? upsertResult.error.message : 'nenhum');
+
+          if (upsertResult.error) {
+            console.error('[SIPP] ❌ SDK UPSERT também falhou:', upsertResult.error.message);
+
+            // Tentativa 3: REST API direta com access_token
+            console.log('[SIPP] Tentativa 3: REST API direta...');
+            var restResult = await insertProfileViaREST(accessToken, userId, userEmail);
+
+            if (restResult.ok) {
+              profileInserted = true;
+              console.log('[SIPP] ✅ Profile inserido via REST API!');
+            } else {
+              console.error('[SIPP] ❌ TODAS AS 3 TENTATIVAS DE INSERT FALHARAM!');
+              console.error('[SIPP] ═══════════════════════════════════════════');
+              console.error('[SIPP] DIAGNÓSTICO COMPLETO:');
+              console.error('[SIPP] 1. SDK insert falhou:', profileResult.error.message);
+              console.error('[SIPP] 2. SDK upsert falhou:', upsertResult.error.message);
+              console.error('[SIPP] 3. REST API falhou. Status:', restResult.status, 'Body:', restResult.body);
+              console.error('[SIPP] ');
+              console.error('[SIPP] ⚠️ AÇÃO NECESSÁRIA:');
+              console.error('[SIPP] Vá ao Supabase Dashboard > Table Editor > profiles');
+              console.error('[SIPP] Clique em "RLS" e adicione uma policy:');
+              console.error('[SIPP]   - Name: "Allow insert for authenticated"');
+              console.error('[SIPP]   - Target roles: authenticated');
+              console.error('[SIPP]   - Operation: INSERT');
+              console.error('[SIPP]   - WITH CHECK: (auth.uid() = id)');
+              console.error('[SIPP] OU desabilite RLS temporariamente para testes.');
+              console.error('[SIPP] ═══════════════════════════════════════════');
+            }
+          } else {
+            profileInserted = true;
+            console.log('[SIPP] ✅ Profile inserido via SDK upsert!');
+          }
+        } else {
+          profileInserted = true;
+          console.log('[SIPP] ✅ Profile inserido via SDK insert!');
+        }
+
+        // Log final do status do profile
+        if (profileInserted) {
+          console.log('[SIPP] ✅ PROFILE SALVO COM SUCESSO na tabela profiles.');
+        } else {
+          console.warn('[SIPP] ⚠️ Profile NÃO foi salvo. O usuário existe no Auth mas NÃO na tabela profiles.');
+          console.warn('[SIPP] ⚠️ O login vai falhar porque não encontrará o status na tabela profiles.');
+          console.warn('[SIPP] ⚠️ Verifique as RLS policies no Supabase Dashboard.');
         }
 
         // ═══════════════════════════════════════════════
         // PASSO 3: Fazer signOut (NÃO manter logado)
         // ═══════════════════════════════════════════════
+        console.log('[SIPP] PASSO 3: Executando signOut...');
         await _supabase.auth.signOut();
-        console.log('[SIPP] signOut realizado.');
+        console.log('[SIPP] ✅ signOut realizado.');
 
         // ═══════════════════════════════════════════════
         // PASSO 4: Mostrar sucesso e redirecionar
         // ═══════════════════════════════════════════════
+        console.log('[SIPP] PASSO 4: Exibindo sucesso e redirecionando...');
         setLoading(false);
-        alert('Cadastro realizado com sucesso! Agora faça seu primeiro login.');
+
+        if (profileInserted) {
+          alert('Cadastro realizado com sucesso! Agora faça seu primeiro login.');
+        } else {
+          alert('Conta criada, mas houve um problema ao salvar o perfil. Entre em contato com o suporte se o login não funcionar.');
+        }
 
         // Mostrar overlay de sucesso
         document.getElementById('successOverlay').classList.add('show');
@@ -876,7 +991,8 @@
         }, 1000);
 
       } catch (err) {
-        console.error('[SIPP] Erro inesperado:', err);
+        console.error('[SIPP] ❌ Erro inesperado no handleSignup:', err);
+        console.error('[SIPP] ❌ Stack:', err.stack || 'N/A');
         alert('Erro de conexão: ' + (err.message || err));
         showError('Erro de conexão. Tente novamente.');
         setLoading(false);
