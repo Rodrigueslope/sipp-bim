@@ -752,57 +752,64 @@ if(explainCard){
 
   <!-- AUTH GUARD: Verificacao de sessao e status -->
   <script>
-  (async function authGuard() {
-    const SUPABASE_URL = 'https://extggehxevmwknixuhpn.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_0F-m0AEgpGOlWHPCGYJuiQ_XWf7Hdm9';
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    try {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.replace('login.html'); return; }
-      const { data: profile, error: profileError } = await sb
-        .from('profiles').select('status').eq('id', session.user.id).single();
-      if (profileError || !profile) {
-        await sb.auth.signOut();
-        window.location.replace('pendente.html');
-        return;
-      }
-      if (profile.status !== 'ativo') {
-        await sb.auth.signOut();
-        window.location.replace('pendente.html');
-        return;
-        try {
-  // Registrar acesso (NÃO pode quebrar o carregamento)
-  const { data: { user } } = await sb.auth.getUser();
+(async function authGuard() {
+  const SUPABASE_URL = 'https://extggehxevmwknixuhpn.supabase.co';
+  const SUPABASE_KEY = 'SUA_CHAVE_AQUI';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  if (user) {
-    await sb.from('access_logs').insert([
-      {
-        user_id: user.id,
-        email: user.email,
-        page: 'index'
-      }
-    ]);
-  }
-} catch (e) {
-  console.warn('Falha ao registrar access_logs (não fatal):', e);
-} finally {
-  // SEMPRE mostrar a página, mesmo se o log falhar
-  document.documentElement.style.visibility = 'visible';
-}
-// 🔓 Logout usando o mesmo client
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await sb.auth.signOut();
-    window.location.replace("login.html");
-  });
-}
-
-    } catch (err) {
-      console.error('Auth guard error:', err);
+  try {
+    // Sessão
+    const { data: { session }, error: sessionError } = await sb.auth.getSession();
+    if (sessionError || !session) {
       window.location.replace('login.html');
+      return;
     }
-  })();
+
+    // Status do perfil
+    const { data: profile, error: profileError } = await sb
+      .from('profiles')
+      .select('status')
+      .eq('id', session.user.id)
+      .single();
+
+    if (profileError || !profile) {
+      await sb.auth.signOut();
+      window.location.replace('pendente.html');
+      return;
+    }
+
+    if (profile.status !== 'ativo') {
+      await sb.auth.signOut();
+      window.location.replace('pendente.html');
+      return;
+    }
+
+    // ✅ Log de acesso (não pode quebrar a página)
+    sb.from('access_logs').insert([{
+      user_id: session.user.id,
+      email: session.user.email,
+      page: 'index'
+    }]).then(() => {}).catch(() => {});
+
+    // ✅ Agora pode mostrar a página
+    document.documentElement.style.visibility = 'visible';
+
+    // Logout
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await sb.auth.signOut();
+        window.location.replace("login.html");
+      });
+    }
+
+  } catch (err) {
+    console.error('Auth guard error:', err);
+    // Mesmo com erro, não deixe a tela travada no hidden
+    document.documentElement.style.visibility = 'visible';
+    window.location.replace('login.html');
+  }
+})();
   </script>
   <!-- FIM AUTH GUARD -->
 
