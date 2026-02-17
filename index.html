@@ -770,19 +770,25 @@ if(explainCard){
         await sb.auth.signOut();
         window.location.replace('pendente.html');
         return;
-        // Registrar acesso
-const { data: { user } } = await sb.auth.getUser();
+        try {
+  // Registrar acesso (NÃO pode quebrar o carregamento)
+  const { data: { user } } = await sb.auth.getUser();
 
-if (user) {
-  await sb.from('access_logs').insert([
-    {
-      user_id: user.id,
-      email: user.email,
-      page: 'index'
-    }
-  ]);
+  if (user) {
+    await sb.from('access_logs').insert([
+      {
+        user_id: user.id,
+        email: user.email,
+        page: 'index'
+      }
+    ]);
+  }
+} catch (e) {
+  console.warn('Falha ao registrar access_logs (não fatal):', e);
+} finally {
+  // SEMPRE mostrar a página, mesmo se o log falhar
+  document.documentElement.style.visibility = 'visible';
 }
-      document.documentElement.style.visibility = 'visible';
 // 🔓 Logout usando o mesmo client
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
